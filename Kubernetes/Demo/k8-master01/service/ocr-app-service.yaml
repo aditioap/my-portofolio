@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-08-16T03:18:23Z"
+  name: ocr-app-service
+  #namespace: development
+  resourceVersion: "177856402"
+  uid: 557d44d3-4f4c-44ae-947b-4f3ee5fbe01c
+spec:
+  clusterIP: 10.110.74.129
+  clusterIPs:
+  - 10.110.74.129
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 3637
+    protocol: TCP
+    targetPort: 3637
+  selector:
+    app: ocr-app
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

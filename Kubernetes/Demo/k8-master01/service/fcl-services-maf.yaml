@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2025-02-04T03:08:31Z"
+  name: fcl-services-maf
+  #namespace: development
+  resourceVersion: "97691924"
+  uid: 4a54742b-7cd9-4753-ac8f-ae13fd033061
+spec:
+  clusterIP: 10.111.140.48
+  clusterIPs:
+  - 10.111.140.48
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5103
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: fcl-services-maf
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

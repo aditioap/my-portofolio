@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-09-24T08:53:02Z"
+  name: acq-photo-services
+  #namespace: development
+  resourceVersion: "41449477"
+  uid: 487d1249-dd14-467e-a526-f4f577c225ca
+spec:
+  clusterIP: 10.99.112.20
+  clusterIPs:
+  - 10.99.112.20
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5098
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: acq-photo-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

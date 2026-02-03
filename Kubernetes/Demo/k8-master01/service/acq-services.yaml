@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-08-19T08:33:52Z"
+  name: acq-services
+  #namespace: development
+  resourceVersion: "3686804"
+  uid: a804e977-c2f0-4c2b-8ff9-e507bc18c773
+spec:
+  clusterIP: 10.105.36.96
+  clusterIPs:
+  - 10.105.36.96
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5086
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: acq-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

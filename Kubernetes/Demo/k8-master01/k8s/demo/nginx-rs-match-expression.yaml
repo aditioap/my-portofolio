@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-rs-match-expression01
+  labels:
+    environment: development
+  # annotations:
+  #   annotation-key1: annotation-value1
+spec:
+  replicas: 3
+  selector:
+    # matchLabels:
+    #   label-key1: label-value1
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - nginx-rs-match-expression-test01
+          # - label-value2
+  template:
+    metadata:
+      name: nginx-rs-match-expression01
+      labels:
+        app: nginx-rs-match-expression-test01
+    spec:
+      containers:
+      - name: nginx-rs-match-expression-test01
+        image: nginx
+        ports:
+        - containerPort: 80
+        # readinessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 80
+        #   initialDelaySeconds: 0
+        #   periodSeconds: 10
+        #   failureThreshold: 3
+        #   successThreshold: 1
+        #   timeoutSeconds: 1

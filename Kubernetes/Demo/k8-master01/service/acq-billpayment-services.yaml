@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-09-18T02:00:10Z"
+  name: acq-billpayment-services
+  #namespace: development
+  resourceVersion: "31907052"
+  uid: 3af72863-f5c6-4dad-a54f-9dd443801322
+spec:
+  clusterIP: 10.111.233.45
+  clusterIPs:
+  - 10.111.233.45
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5096
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: acq-billpayment-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

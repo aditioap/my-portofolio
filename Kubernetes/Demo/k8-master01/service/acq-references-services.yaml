@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-09-06T07:53:22Z"
+  name: acq-references-services
+  #namespace: development
+  resourceVersion: "11306113"
+  uid: 18831b3f-c4bc-46ec-906e-6c2048767baf
+spec:
+  clusterIP: 10.96.110.173
+  clusterIPs:
+  - 10.96.110.173
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5092
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: acq-references-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

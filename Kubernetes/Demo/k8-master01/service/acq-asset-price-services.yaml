@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-09-02T06:27:56Z"
+  name: acq-asset-price-services
+  #namespace: development
+  resourceVersion: "10008075"
+  uid: 6bc61ff3-831b-4c9d-b6e7-27f90b02dfdf
+spec:
+  clusterIP: 10.102.93.4
+  clusterIPs:
+  - 10.102.93.4
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5089
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: acq-asset-price-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

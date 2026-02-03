@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: daemon-nginx-test01
+  labels:
+    name: daemon-nginx-test01
+    environment: development
+  # annotations:
+  #   annotation-key1: annotation-value1
+spec:
+  selector:
+    # matchLabels:
+    #   app: daemon-nginx
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - daemon-nginx
+  template:
+    metadata:
+      name: daemon-nginx-test01
+      labels:
+        app: daemon-nginx
+    spec:
+      containers:
+        - name: daemon-nginx-test01
+          image: nginx
+          ports:
+            - containerPort: 80
+          # readinessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: 80
+          #   initialDelaySeconds: 0
+          #   periodSeconds: 10
+          #   failureThreshold: 3
+          #   successThreshold: 1
+          #   timeoutSeconds: 1

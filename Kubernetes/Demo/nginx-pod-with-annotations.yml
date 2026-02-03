@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-tes2
+  labels:
+    environment: development
+    team: product
+    version: 1.0.0
+  annotations:
+    description: ini aplikasi tim product
+spec:
+  containers:
+    - name: nginx-tes2
+      image: nginx
+      ports:
+        - containerPort: 80

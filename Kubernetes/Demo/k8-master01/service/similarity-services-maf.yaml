@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2025-02-14T06:40:05Z"
+  name: similarity-services-maf
+  #namespace: development
+  resourceVersion: "101987114"
+  uid: 6ed3efbe-2b17-46ac-94d8-41c120dd8c59
+spec:
+  clusterIP: 10.109.74.105
+  clusterIPs:
+  - 10.109.74.105
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5111
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: similarity-services-maf
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

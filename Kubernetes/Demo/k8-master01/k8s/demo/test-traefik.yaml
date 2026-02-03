@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: traefik
+spec:
+  containers:
+  - image: git.mcf.co.id:5050/dev.bs/fincore.service/traefik:2.8.1
+    imagePullPolicy: Always
+    name: traefik
+  imagePullSecrets:
+  - name: mydockercredentials

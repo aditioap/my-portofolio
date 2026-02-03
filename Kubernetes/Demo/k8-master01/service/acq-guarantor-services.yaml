@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-09-06T08:34:10Z"
+  name: acq-guarantor-services
+  #namespace: development
+  resourceVersion: "11315573"
+  uid: 9d4865a6-5ffc-4c47-a88f-03e6b544503d
+spec:
+  clusterIP: 10.100.225.221
+  clusterIPs:
+  - 10.100.225.221
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5093
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: acq-guarantor-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

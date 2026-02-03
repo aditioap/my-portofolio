@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-08-21T06:27:07Z"
+  name: master-services
+  #namespace: development
+  resourceVersion: "3972592"
+  uid: 81a41f02-76b3-4268-bdc4-68732505f584
+spec:
+  clusterIP: 10.109.88.145
+  clusterIPs:
+  - 10.109.88.145
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5087
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: mongo-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

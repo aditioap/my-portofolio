@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-09-27T08:47:01Z"
+  name: similarity-services
+  #namespace: development
+  resourceVersion: "45643772"
+  uid: 6cad20b0-a61c-42bb-a672-610fc135e16e
+spec:
+  clusterIP: 10.100.63.40
+  clusterIPs:
+  - 10.100.63.40
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5099
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: similarity-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

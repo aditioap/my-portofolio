@@ -1,0 +1,36 @@
+[root@k8-master01 yamls]# cd ingress-demo/
+[root@k8-master01 ingress-demo]# ls
+haproxy.cfg              ingress-resource-2.yaml  nginx-deploy-blue.yaml   nginx-deploy-main.yaml
+ingress-resource-1.yaml  ingress-resource-3.yaml  nginx-deploy-green.yaml  traefik
+[root@k8-master01 ingress-demo]# cd traefik/
+[root@k8-master01 traefik]# ls
+general  middlewares  simple-ingress-routes  tls-ingress-routes  traefik-dashboard.yaml  traefik-values.yaml
+[root@k8-master01 traefik]# ls -lthr
+total 16K
+drwxr-xr-x 2 root root   60 May 13 14:26 general
+drwxr-xr-x 2 root root 4.0K Jun  3 17:56 simple-ingress-routes
+drwxr-xr-x 2 root root  122 Jun  4 11:46 tls-ingress-routes
+-rw-r--r-- 1 root root 5.7K Jul 17 18:31 traefik-values.yaml
+drwxr-xr-x 2 root root  268 Jul 18 10:18 middlewares
+-rw-r--r-- 1 root root  708 Jul 18 15:29 traefik-dashboard.yaml
+[root@k8-master01 traefik]# vi traefik-values.yaml
+[root@k8-master01 traefik]#
+[root@k8-master01 traefik]#
+[root@k8-master01 traefik]#
+[root@k8-master01 traefik]#
+[root@k8-master01 traefik]#
+[root@k8-master01 traefik]# helm install traefik traefik/traefik --values traefik-values.yaml -n traefik --create-namespace
+NAME: traefik
+LAST DEPLOYED: Wed Aug  7 12:08:38 2024
+NAMESPACE: traefik
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+traefik with docker.io/traefik:v3.1.0 has been deployed successfully on traefik namespace !
+
+🚨 When enabling persistence for certificates, permissions on acme.json can be
+lost when Traefik restarts. You can ensure correct permissions with an
+initContainer. See https://github.com/traefik/traefik-helm-chart/blob/master/EXAMPLES.md#use-traefik-native-lets-encrypt-integration-without-cert-manager
+for more info. 🚨
+[root@k8-master01 traefik]#

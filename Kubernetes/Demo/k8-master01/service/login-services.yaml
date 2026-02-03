@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-10-03T02:05:33Z"
+  name: login-services
+  #namespace: development
+  resourceVersion: "47614855"
+  uid: 58535386-db00-4c2e-a7dd-0a1b30ef5415
+spec:
+  clusterIP: 10.99.228.154
+  clusterIPs:
+  - 10.99.228.154
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5101
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: login-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

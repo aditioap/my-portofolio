@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-08-20T10:16:27Z"
+  name: minio-services
+  #namespace: development
+  resourceVersion: "15656904"
+  uid: 3aec1b14-defb-47d8-a413-35e86337937d
+spec:
+  clusterIP: 10.107.150.105
+  clusterIPs:
+  - 10.107.150.105
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - nodePort: 30720
+    port: 5095
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: minio-services
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}

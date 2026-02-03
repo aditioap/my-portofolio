@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2025-07-15T07:47:24Z"
+  name: veriface-services
+  #namespace: development
+  resourceVersion: "169502426"
+  uid: 8431f876-a2c1-44eb-a50c-ead4a69a0385
+spec:
+  clusterIP: 10.106.182.109
+  clusterIPs:
+  - 10.106.182.109
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5115
+    protocol: TCP
+    targetPort: 5115
+  selector:
+    app: veriface-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

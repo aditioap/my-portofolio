@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2025-02-20T04:10:30Z"
+  name: send-out-services
+  #namespace: development
+  resourceVersion: "104471292"
+  uid: f3559f91-958b-46c3-aa12-b073127235c6
+spec:
+  clusterIP: 10.98.120.84
+  clusterIPs:
+  - 10.98.120.84
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5112
+    protocol: TCP
+    targetPort: 3344
+  selector:
+    app: send-out-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

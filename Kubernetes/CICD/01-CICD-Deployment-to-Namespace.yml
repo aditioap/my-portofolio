@@ -1,0 +1,67 @@
+pipeline {
+    agent {
+        node {
+            label 'UAT_K8-Master'
+        }
+    }
+    environment {
+        KUBE_NAMESPACE = 'devops-tools'  // Default value for namespace
+    }
+    stages {
+        stage('Set Namespace') {
+            steps {
+                script {
+                    // Prompt the user to optionally override the default namespace
+                    KUBE_NAMESPACE = input message: 'Specify the Kubernetes namespace (or use default):',
+                                        parameters: [
+                                            string(defaultValue: 'devops-tools', description: 'Namespace for the deployment', name: 'KUBE_NAMESPACE')
+                                        ]
+
+                    // Generate the updated deployment YAML with the correct namespace
+                    DEPLOYMENT_YAML = """
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+  namespace: ${KUBE_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      containers:
+      - name: hello-container
+        image: alpine:latest
+        command: ["sh", "-c", "echo 'Hello, Kubernetes!' && sleep 3600"]
+"""
+                }
+            }
+        }
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    // Write the deployment YAML to a file and apply it
+                    writeFile file: 'hello-world-deployment.yaml', text: DEPLOYMENT_YAML
+                    sh "kubectl apply -f hello-world-deployment.yaml"
+                }
+            }
+        }
+        stage('Verify Deployment') {
+            steps {
+                script {
+                    // Wait for the pod to be ready
+                    sh "kubectl rollout status deployment/hello-world -n ${KUBE_NAMESPACE}"
+
+                    // Check the status of the pods
+                    def podStatus = sh(script: "kubectl get pods -n ${KUBE_NAMESPACE}", returnStdout: true).trim()
+                    echo "Pods in ${KUBE_NAMESPACE}:\n${podStatus}"
+                }
+            }
+        }
+    }
+}

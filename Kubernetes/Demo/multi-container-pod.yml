@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-rs-test02
+  # namespace: development
+  labels:
+    app: nginx-pod-test02
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-pod-test02
+  template:
+    metadata:
+      name: nginx-pod-test02
+      labels:
+        app: nginx-pod-test02
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx
+          ports:
+            - containerPort: 80
+        - name: nodejs-web
+          image: khannedy/nodejs-web
+          ports:
+            - containerPort: 3000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc-test02
+  namespace: development
+spec:
+  selector:
+    app: nginx-pod-test02
+  ports:
+    - port: 8080
+      targetPort: 80
+      name: nginx-container
+    - port: 3000
+      targetPort: 3000
+      name: nodejs-web
+
+# ---
+
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: curl
+#   labels:
+#     name: curl
+# spec:
+#   containers:
+#     - name: curl
+#       image: khannedy/nginx-curl

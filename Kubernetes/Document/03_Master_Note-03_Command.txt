@@ -1,0 +1,24 @@
+## Setup Network using calico
+curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml -O
+
+kubectl apply -f calico.yaml
+
+## Check pod CIDR subnet
+kubectl get nodes -o custom-columns=NODE:.metadata.name,POD_CIDR:.spec.podCIDR
+
+[root@k8-master01 ~]# kubectl get nodes -o custom-columns=NODE:.metadata.name,POD_CIDR:.spec.podCIDR
+NODE          POD_CIDR
+k8-master01   10.11.0.0/24
+
+## Check pod command all-namespaces
+[root@k8-master01 ~]# kubectl get pods --all-namespaces
+NAMESPACE     NAME                                       READY   STATUS    RESTARTS   AGE
+kube-system   calico-kube-controllers-7ddc4f45bc-htdvt   1/1     Running   0          3m21s
+kube-system   calico-node-d4kp5                          1/1     Running   0          3m21s
+kube-system   coredns-5dd5756b68-brzbq                   1/1     Running   0          5m31s
+kube-system   coredns-5dd5756b68-df59s                   1/1     Running   0          5m31s
+kube-system   etcd-k8-master01                           1/1     Running   3          5m49s
+kube-system   kube-apiserver-k8-master01                 1/1     Running   3          5m48s
+kube-system   kube-controller-manager-k8-master01        1/1     Running   0          5m49s
+kube-system   kube-proxy-2pprx                           1/1     Running   0          5m32s
+kube-system   kube-scheduler-k8-master01                 1/1     Running   3          5m48s

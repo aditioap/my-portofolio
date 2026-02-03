@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-09-20T07:19:01Z"
+  name: validate-services
+  #namespace: development
+  resourceVersion: "53769769"
+  uid: f1f08813-4dd5-4541-875c-55cb1ab94031
+spec:
+  clusterIP: 10.101.6.207
+  clusterIPs:
+  - 10.101.6.207
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5097
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: validate-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

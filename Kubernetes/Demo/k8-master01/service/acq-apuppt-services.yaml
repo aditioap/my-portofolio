@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-09-10T09:12:01Z"
+  name: acq-apuppt-services
+  #namespace: development
+  resourceVersion: "15237424"
+  uid: 714e1e46-78b6-4b40-bebc-877afb66949e
+spec:
+  clusterIP: 10.110.246.240
+  clusterIPs:
+  - 10.110.246.240
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5094
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: acq-apuppt-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

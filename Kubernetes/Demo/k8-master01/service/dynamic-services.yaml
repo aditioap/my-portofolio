@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-08-19T08:21:18Z"
+  name: dynamic-services
+  #namespace: development
+  resourceVersion: "3693941"
+  uid: 54b08eb1-2492-4dde-92a0-26c780b17f9e
+spec:
+  clusterIP: 10.111.140.47
+  clusterIPs:
+  - 10.111.140.47
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5085
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: dynamic-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

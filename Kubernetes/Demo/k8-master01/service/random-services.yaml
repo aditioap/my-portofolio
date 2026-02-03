@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2025-07-31T09:51:50Z"
+  name: random-services
+  #namespace: development
+  resourceVersion: "172064471"
+  uid: 3ee9ca41-ea68-42a0-82c1-d3d90b9f644c
+spec:
+  clusterIP: 10.107.167.152
+  clusterIPs:
+  - 10.107.167.152
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5116
+    protocol: TCP
+    targetPort: 5116
+  selector:
+    app: random-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

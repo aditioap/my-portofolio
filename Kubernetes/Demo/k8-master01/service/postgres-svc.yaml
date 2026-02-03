@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-11-08T06:15:03Z"
+  labels:
+    app: postgres
+  name: postgres-svc
+  #namespace: development
+  resourceVersion: "60874104"
+  uid: d40f7836-732d-4644-88e7-c5933f4643ed
+spec:
+  clusterIP: 10.102.176.38
+  clusterIPs:
+  - 10.102.176.38
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    app: postgres
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

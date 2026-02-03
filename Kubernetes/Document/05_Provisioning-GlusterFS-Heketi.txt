@@ -1,0 +1,119 @@
+Link heketi Installation using GlusterFS and heketi
+
+1. https://kubesphere.io/docs/v3.4/reference/storage-system-installation/glusterfs-server/
+
+2. https://github.com/justmeandopensource/glusterfs/tree/master/glusterfs-heketi-demo
+
+
+
+   {
+
+    "clusters": [
+
+       {
+
+         "nodes": [
+
+           {
+
+             "node": {
+
+               "hostnames": {
+
+                 "manage": [
+
+                   "poc-gluster01" 
+
+                ],
+
+                "storage": [
+
+                  "192.168.4.11" 
+
+                ]
+
+              },
+
+              "zone": 3
+
+            },
+
+            "devices": [
+
+              "/dev/vda" 
+
+            ]
+
+          },
+
+          {
+
+            "node": {
+
+              "hostnames": {
+
+                "manage": [
+
+                  "poc-glusterfs02" 
+
+                ],
+
+                "storage": [
+
+                  "192.168.4.12"
+
+                ]
+
+              },
+
+              "zone": 3
+
+            },
+
+            "devices": [
+
+              "/dev/vda" 
+
+            ]
+
+          },
+
+          {
+
+             "node": {
+
+               "hostnames": {
+
+                 "manage": [
+
+                   "poc-glusterfs03"
+
+                ],
+
+                "storage": [
+
+                  "192.168.4.13"  
+
+                ]
+
+              },
+
+              "zone": 3
+
+            },
+
+            "devices": [
+
+              "/dev/vda"
+
+            ]
+
+          }
+
+        ]
+
+      }
+
+    ]
+
+  }

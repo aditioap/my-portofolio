@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2025-04-30T02:39:58Z"
+  name: slik-services
+  #namespace: development
+  resourceVersion: "132946465"
+  uid: e9d7bba0-ee41-4b2b-a914-526ffe867f09
+spec:
+  clusterIP: 10.99.69.190
+  clusterIPs:
+  - 10.99.69.190
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5114
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: slik-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

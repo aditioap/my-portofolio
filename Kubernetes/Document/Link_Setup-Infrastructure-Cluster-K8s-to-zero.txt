@@ -1,0 +1,2 @@
+## Link Set Infrastructure Cluster K8s to zero by Winter Soldier
+https://devtron.ai/blog/winter-soldier-scale-down-your-infrastructure-in-the-easiest-possible-way/

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fin-miniapi
+spec:
+  containers:
+  - image: git.mcf.co.id:5050/dev.bs/fincore.service/fin_miniapi:Production-v8
+    imagePullPolicy: Always
+    name: fin-miniapi
+  imagePullSecrets:
+  - name: mydockercredentials

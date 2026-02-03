@@ -1,0 +1,45 @@
+## Kalo error gini, berarti remove config.toml
+[root@k8-worker01 ~]# kubeadm join 172.16.91.33:6443 --token ozsmlp.c1arku8gx3h1qqys \
+--discovery-token-ca-cert-hash sha256:8658042031ac86579cdd6693a9a8028a844fbe58cebf7bf75fd66dfe7ed34fae
+[preflight] Running pre-flight checks
+        [WARNING Hostname]: hostname "k8-worker01" could not be reached
+        [WARNING Hostname]: hostname "k8-worker01": lookup k8-worker01 on 172.16.100.109:53: server misbehaving
+error execution phase preflight: [preflight] Some fatal errors occurred:
+        [ERROR CRI]: container runtime is not running: output: time="2023-10-19T16:58:43+07:00" level=fatal msg="validate service connection: validate CRI v1 runtime API for endpoint \"unix:///var/run/containerd/containerd.sock\": rpc error: code = Unimplemented desc = unknown service runtime.v1.RuntimeService"
+, error: exit status 1
+[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+To see the stack trace of this error execute with --v=5 or higher
+
+Try the below steps:
+
+delete the config.tomal file $rm /etc/containerd/config.toml
+restart containerd systemctl restart containerd
+try the init command kubeadm init
+
+## kalo udah gak error bisa jalanin command kubeadm join node worker ke master
+
+
+## Check nodes command from master
+[root@k8-master01 ~]# kubectl get nodes
+NAME          STATUS   ROLES           AGE     VERSION
+k8-master01   Ready    control-plane   30m     v1.28.2
+k8-worker01   Ready    <none>          11m     v1.28.3
+k8-worker02   Ready    <none>          4m35s   v1.28.3
+
+## Check pods information wide 
+[root@k8-master01 k8s]# kubectl get pod -o wide
+NAME                                READY   STATUS    RESTARTS   AGE     IP             NODE          NOMINATED NODE   READINESS GATES
+nginx-deployment-7b965f675d-bbhpc   1/1     Running   0          2m26s   10.11.113.16   k8-worker01   <none>           <none>
+nginx-deployment-7b965f675d-qwnvn   1/1     Running   0          2m25s   10.11.72.210   k8-worker02   <none>           <none>
+
+## Demo create mongodb and mongo express
+[root@k8-master01 demo]# kubectl logs mongo-express-859f75dd4f-qrrqr
+No custom config.js found, loading config.default.js
+Welcome to mongo-express
+------------------------
+
+
+Mongo Express server listening at http://0.0.0.0:8081
+Server is open to allow connections from anyone (0.0.0.0)
+basicAuth credentials are "admin:pass", it is recommended you change this in your config.js!
+

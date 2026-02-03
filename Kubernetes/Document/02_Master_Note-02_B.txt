@@ -1,0 +1,12 @@
+[root@k8-master01 sysadmin]# kubectl get nodes
+NAME          STATUS     ROLES           AGE     VERSION
+k8-master01   NotReady   control-plane   6m47s   v1.28.2
+[root@k8-master01 sysadmin]# kubectl get pods --all-namespaces
+NAMESPACE     NAME                                  READY   STATUS    RESTARTS   AGE
+kube-system   coredns-5dd5756b68-dccgs              0/1     Pending   0          7m18s
+kube-system   coredns-5dd5756b68-zz2t7              0/1     Pending   0          7m18s
+kube-system   etcd-k8-master01                      1/1     Running   2          7m23s
+kube-system   kube-apiserver-k8-master01            1/1     Running   2          7m23s
+kube-system   kube-controller-manager-k8-master01   1/1     Running   0          7m23s
+kube-system   kube-proxy-h45f7                      1/1     Running   0          7m18s
+kube-system   kube-scheduler-k8-master01            1/1     Running   2          7m23s

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2025-04-16T02:34:20Z"
+  name: redis
+  #namespace: development
+  resourceVersion: "142197796"
+  uid: 8718fbc2-2a5c-473e-bfd1-03a17d424c14
+spec:
+  clusterIP: 10.103.73.77
+  clusterIPs:
+  - 10.103.73.77
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - nodePort: 30100
+    port: 6379
+    protocol: TCP
+    targetPort: 6379
+  selector:
+    app: redis
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}

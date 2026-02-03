@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-test-01
+  labels:
+    environment: development
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      name: nginx-test-01
+  template:
+    metadata:
+      name: nginx-test-01
+      labels:
+        name: nginx-test-01
+        environment: development 
+    spec:
+      containers:
+        - name: nginx-test-01
+          image: nginx
+          ports:
+            - containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc-test01
+spec:
+  selector:
+    name: nginx-test-01
+  ports:
+    - port: 8080
+      targetPort: 80
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: curl
+  labels:
+    name: curl
+spec:
+  containers:
+    - name: curl
+      image: khannedy/nginx-curl

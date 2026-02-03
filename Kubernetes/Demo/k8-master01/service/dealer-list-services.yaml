@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2025-02-12T10:39:59Z"
+  name: dealer-list-services
+  #namespace: development
+  resourceVersion: "101200985"
+  uid: 107b65f2-1bbd-48c2-80c0-1abbdb3b916a
+spec:
+  clusterIP: 10.107.98.176
+  clusterIPs:
+  - 10.107.98.176
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5110
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: dealer-list-services
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
