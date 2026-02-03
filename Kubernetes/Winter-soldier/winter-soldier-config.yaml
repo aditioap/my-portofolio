@@ -1,0 +1,30 @@
+apiVersion: pincher.devtron.ai/v1alpha1
+kind: Hibernator
+metadata:
+  name: k8s-hibernator
+spec:
+  timeRangesWithZone:
+    timeZone: "Asia/Jakarta"
+    timeRanges:
+    - timeFrom: 12:00:00
+      timeTo: 14:00:00
+      weekdayFrom: mon
+      weekdayTo: sun
+  selectors:
+  - inclusions:
+    - objectSelector:
+        type: "Deployment"
+      namespaceSelector:
+        name: "default"
+    exclusions:
+    - objectSelector:
+        name: "winter-soldier"  # Exclude the specific deployment
+        type: "Deployment"  
+      namespaceSelector:
+        name: "default"
+    - objectSelector:
+        name: ""
+        type: "Deployment"  
+      namespaceSelector:
+        name: "kube-system,kube-node-lease,kube-public,argo" 
+  action: sleep
