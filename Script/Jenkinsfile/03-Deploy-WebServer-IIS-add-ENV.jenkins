@@ -1,0 +1,235 @@
+pipeline {
+    agent {
+        node {
+            label "${params.NODE_LABELS}"
+        }
+    }
+
+    parameters {
+        string(name: 'NODE_LABELS', defaultValue: '', description: 'Enter the node label to use (FINMOOFI-MCF or FINMOOFI-MAF)')
+    }
+
+    environment {
+        DOTNET_CLI_HOME = "C:\\Program Files\\dotnet"
+    }
+
+    stages {
+        stage('Set COMPANY_ID_ENVIRONMENT and COMPANY_NAME_ENVIRONMENT') {
+            steps {
+                script {
+                    def nodeLabels = params.NODE_LABELS
+                    echo "NODE_LABELS passed to pipeline: ${nodeLabels}"
+
+                    // Set local variables to store the company data
+                    def companyId = ''
+                    def companyName = ''
+                    def domainEndpoint = ''
+                    def domainEndpointVertel = ''
+                    def minioURL = ''
+                    def domainEndpointMoofiEnv = ''
+
+
+                    // Check the node label and set values
+                    if (nodeLabels.contains("FINMOOFI-MCF")) {
+                        companyId = '3'
+                        companyName = 'MEGA CENTRAL FINANCE'
+                        domainEndpoint = 'http://api-finmoofi.mcf.co.id'
+                        domainEndpointVertel = 'http://stg-api-fincore.mcf.co.id'
+                        minioURL = 'https://mobile.mcf.co.id/mcf/minio-service'
+                        domainEndpointMoofiEnv = 'https://mobile.mcf.co.id/mcf'
+                    } else if (nodeLabels.contains("FINMOOFI-MAF")) {
+                        companyId = '2'
+                        companyName = 'MEGA AUTO FINANCE'
+                        domainEndpoint = 'http://api-finmoofi.maf.co.id'
+                        domainEndpointVertel = 'http://stg-api-fincore.mcf.co.id'
+                        minioURL = 'https://mobile.maf.co.id/maf/minio-service'
+                        domainEndpointMoofiEnv = 'https://mobile.maf.co.id/maf'                       
+                    }
+
+                    // Print out the values of companyId and companyName
+                    echo "companyId is set to: ${companyId}"
+                    echo "companyName is set to: ${companyName}"
+                    echo "domainEndpoint is set to: ${domainEndpoint}"
+                    echo "domainEndpointVertel is set to: ${domainEndpointVertel}"
+                    echo "minioURL is set to: ${minioURL}"
+                    echo "domainEndpointMoofiEnv is set to: ${domainEndpointMoofiEnv}"
+
+                    // Store the values in the current build to pass to other stages
+                    currentBuild.description = "COMPANY_ID_ENVIRONMENT=${companyId}, COMPANY_NAME_ENVIRONMENT=${companyName}, DOMAIN_ENDPOINT_ENVIRONMENT=${domainEndpoint}, DOMAIN_ENDPOINT_VERTEL_ENVIRONMENT=${domainEndpointVertel}, MINIO_URL=${minioURL}, DOMAIN_ENDPOINT_MOOFI_ENVIRONMENT=${domainEndpointMoofiEnv}"
+                    
+                    // Save nodeLabels for later use
+                    env.NODE_LABELS = nodeLabels
+                }
+            }
+        }
+
+        stage('Check Branch') {
+            when {
+                branch "Staging-APUPPT-BPR"
+            }
+            steps {
+                script {
+                    bat "dotnet --version"
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    bat "dotnet restore"
+                    bat "dotnet build --configuration Release"
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    bat "dotnet test --no-restore --configuration Release"
+                }
+            }
+        }
+
+        stage('Publish') {
+            steps {
+                script {
+                    def siteName = env.NODE_LABELS
+
+                    if (!siteName) {
+                        error "NODE_LABELS is not set. Ensure it is defined in the environment or pipeline parameters."
+                    }
+
+                    powershell """
+                    If (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+                        throw "This script must be run as an Administrator."
+                    }            
+
+                    Import-Module -Name WebAdministration
+
+                    # \$iisSiteName = "MOOFI-FINMCF-*"
+                    \$iisSiteName = "${siteName}-*"
+
+                    # Restart the IIS site
+                    if ((Get-Website -Name \$iisSiteName).State -ne "Stopped") {
+                        Stop-Website -Name \$iisSiteName
+                        Stop-WebAppPool -Name \$iisSiteName
+                    }
+                    #Stop-Website -Name \$iisSiteName
+                    #Stop-WebAppPool -Name \$iisSiteName
+
+                    Write-Host "Website \$iisSiteName stopped"
+                    """
+                    bat "dotnet publish --no-restore --configuration Release --output C:\\Publish\\${siteName}"
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    // Retrieve the values passed from the previous stage
+                    def companyIdEnv = currentBuild.description.split(",")[0].split("=")[1]
+                    def companyNameEnv = currentBuild.description.split(",")[1].split("=")[1]
+                    def domainEndpointEnv = currentBuild.description.split(",")[2].split("=")[1]
+                    def domainEndpointVertelEnv = currentBuild.description.split(",")[3].split("=")[1]
+                    def minioURL = currentBuild.description.split(",")[4].split("=")[1]
+                    def domainEndpointMoofiEnv = currentBuild.description.split(",")[5].split("=")[1]
+                    def nodeLabels = env.NODE_LABELS
+
+                    if (!nodeLabels) {
+                        error "NODE_LABELS is not set. Ensure it is defined in the environment or pipeline parameters."
+                    }
+
+                    echo """
+                    Deploying with: 
+                    COMPANY_ID_ENVIRONMENT=${companyIdEnv}, 
+                    COMPANY_NAME_ENVIRONMENT=${companyNameEnv}, 
+                    DOMAIN_ENDPOINT_ENVIRONMENT=${domainEndpointEnv},
+                    DOMAIN_ENDPOINT_VERTEL_ENVIRONMENT=${domainEndpointVertelEnv},
+                    MINIO_URL=${minioURL},                     
+                    NODE_LABELS=${nodeLabels}
+                    DOMAIN_ENDPOINT_MOOFI_ENVIRONMENT=${domainEndpointMoofiEnv}
+                    """
+
+                    withCredentials([usernamePassword(credentialsId: 'svr.jenkins', passwordVariable: 'CREDENTIAL_PASSWORD', usernameVariable: 'CREDENTIAL_USERNAME')]) {
+                        powershell """
+                        # Ensure running with administrative privileges
+                        If (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+                            throw "This script must be run as an Administrator."
+                        }
+
+                        # Import required module
+                        Import-Module -Name WebAdministration
+
+                        # Define the pattern to match the sites (wildcard pattern)
+                        \$sitePattern = "${nodeLabels}-*"
+
+                        # Get the environment variables from Jenkins
+                        \$companyNameEnv = "${companyNameEnv}"
+                        \$companyIdEnv = "${companyIdEnv}"
+                        \$domainEndpointEnv = "${domainEndpointEnv}"
+                        \$domainEndpointVertelEnv = "${domainEndpointVertelEnv}"
+                        \$minioURL = "${minioURL}"
+                        \$domainEndpointMoofiEnv = "${domainEndpointMoofiEnv}"
+
+                        try {
+                            # Set environment variables for each matching IIS site
+                            Get-Website | Where-Object { \$_.Name -like \$sitePattern } | ForEach-Object {
+                                \$iisSiteName = \$_.Name
+
+                                # Environment variables to set
+                                \$envVars = @{
+                                    "COMPANY_NAME_ENVIRONMENT" = \$companyNameEnv
+                                    "COMPANY_ID_ENVIRONMENT" = \$companyIdEnv
+                                    "DOMAIN_ENDPOINT_ENVIRONMENT" = \$domainEndpointEnv
+                                    "DOMAIN_ENDPOINT_VERTEL_ENVIRONMENT" = \$domainEndpointVertelEnv
+                                    "MINIO_URL" = \$minioURL
+                                    "DOMAIN_ENDPOINT_MOOFI_ENVIRONMENT" = \$domainEndpointMoofiEnv
+                                }
+
+                                # Set environment variables for the site
+                                foreach (\$envVar in \$envVars.Keys) {
+                                    \$envVarValue = \$envVars[\$envVar]
+                                    Write-Host "Setting environment variable \$envVar to \$envVarValue for site \$iisSiteName"
+
+                                    # Check if the environment variable exists
+                                    \$existingEnvVar = Get-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/\$iisSiteName" -filter "system.webServer/aspNetCore/environmentVariables/add[@name='\$envVar']" -name "value" -ErrorAction SilentlyContinue
+
+                                    if (\$existingEnvVar) {
+                                        # Update the existing environment variable
+                                        Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/\$iisSiteName" -filter "system.webServer/aspNetCore/environmentVariables/add[@name='\$envVar']" -name "value" -value "\$envVarValue"
+                                    } else {
+                                        # Create the environment variable if it does not exist
+                                        Add-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/\$iisSiteName" -filter "system.webServer/aspNetCore/environmentVariables" -name "." -value @{name="\$envVar"; value="\$envVarValue"}
+                                    }
+                                }
+                                
+                                # Restart the IIS site
+                                if ((Get-Website -Name \$iisSiteName).State -ne "Stopped") {
+                                    Stop-Website -Name \$iisSiteName
+                                    Stop-WebAppPool -Name \$iisSiteName
+                                }
+
+                                Start-Website -Name \$iisSiteName
+                                Start-WebAppPool -Name \$iisSiteName
+
+                                Write-Host "Website \$iisSiteName started"
+                            }                            
+                        } catch {
+                            Write-Error "An error occurred: \$_"
+                            throw
+                        }                                             
+                        """
+                    }
+                }
+            }
+        }      
+    }
+
+    post {
+        success {
+            echo 'Build, test, and publish successful!'
+        }
+    }
+}

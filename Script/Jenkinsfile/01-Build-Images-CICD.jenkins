@@ -1,0 +1,183 @@
+// @Library('pipeline-utility-steps') _
+def rootDir = []
+def finSrvc = []
+
+pipeline {
+    agent {
+        node {
+            label 'UAT_docker-manager'
+        }
+    }
+
+    stages {
+        stage('User Input'){
+            steps {
+                script {
+
+                    def userInput = input(
+                        message: 'Select a service name:',
+                        parameters: [
+                            choice(
+                                name: 'ServiceName',
+                                choices: [
+                                    'ALL', 'BPKB', 'CA', 'CM', 'CREDITS', 'CREDITSANALYST', 'CSSESSION',
+                                    'DEALERPAYMENT', 'MASTERS', 'MASTER_TRANS_TYPE_HIERARCHY',
+                                    'MINIAPI', 'NPP', 'OMA', 'REPORT', 'VERTEL'
+                                ].join('\n'),
+                                description: 'Select a service name from the dropdown'
+                            )
+                        ]
+                    )
+
+                    // Set the entered value as an environment variable
+                    env.MY_VARIABLE = userInput.toUpperCase()
+
+                    // Log selected service for debugging
+                    echo "User selected service: ${env.MY_VARIABLE}"
+                }
+            }
+        }
+
+
+        stage('Check Dockerfile'){
+            when {
+                branch "FINMOOFI-R4" // ---> ini mesti di ganti jadi nama branch yang digunakan
+            }
+            steps {
+                script {
+                    // Access the value stored in the environment variable
+                    def myValue = env.MY_VARIABLE
+                    def output
+
+                    // Check the value and execute steps accordingly
+                    if (myValue != 'ALL') {
+                        echo 'Executing steps for SomeCondition...'
+                        // Add your steps for the condition
+                        output = sh(script: "find . -iname Dockerfile | grep -w ${myValue}", returnStdout: true).trim().split('\n')
+
+                    } else {
+                        echo 'Executing default steps...'
+                        // Add your default steps
+                        output = sh(script: 'find . -iname Dockerfile', returnStdout: true).trim().split('\n')
+
+                    }
+
+                    echo "${output}"
+
+                    // def output = sh(script: 'find . -iname Dockerfile', returnStdout: true).trim().split('\n')
+
+                    // Looping dari list
+                    output.each { item ->
+                        echo "${item}"
+                        rootDir.add(item)
+
+                    }
+                }
+            }
+
+        }
+
+        stage('List Dockerfiles') {
+            steps { 
+                script {
+
+                    rootDir.each { item ->
+                        echo "List Dockerfiles yg akan dibuild: ${item}"
+                    }
+                }
+            }
+        }
+
+        stage('list name services') {
+            steps {
+                script {
+
+                    def myValuesrvc = env.MY_VARIABLE
+                    def output_srvc
+
+                    if (myValuesrvc != 'ALL') {
+                        echo 'Executing steps for SomeCondition...'
+                        // Add your steps for the condition
+                        output_srvc = sh(
+                            returnStdout: true,
+                            script: """ find . -iname Dockerfile |grep FINCORE.SERVICE |grep -w ${myValuesrvc} |sed 's/\\./ /g' | sed 's|/| |g' |awk '{print \$3}' """
+                        ).trim().split('\n')
+
+                    } else {
+                        echo 'Executing default steps...'
+                        // Add your default steps
+                        output_srvc = sh(
+                            returnStdout: true,
+                            script: """ find . -iname Dockerfile |grep FINCORE.SERVICE |sed 's/\\./ /g' | sed 's|/| |g' |awk '{print \$3}' """
+                        ).trim().split('\n')
+
+                    }
+
+                    // Replace array value string to lowercase
+                    def namesrvc = output_srvc.collect { it.toLowerCase() }
+
+                    // value add to array nameSrvc
+                    namesrvc.each { item ->
+                        //echo "${service}"
+                        finSrvc.add(item)
+
+                    }
+                }
+            }
+        }
+
+ 
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    // Define the Docker image repository and tag
+                    def dockerRepository = 'git.macf.co.id:5050/dev.bs/fincore.service'
+                    def dockerImageTag = env.BUILD_NUMBER
+                    def gitBranch = env.BRANCH_NAME
+
+                    finSrvc.eachWithIndex { value, index ->
+                        def file = rootDir[index]
+
+                        echo "docker build -t ${dockerRepository}/fin_${value}:${gitBranch}-v${dockerImageTag} -f ${file} ."
+
+                        // Build the Docker image
+                        sh "sudo docker build -t ${dockerRepository}/fin_${value}:${gitBranch}-v${dockerImageTag} -f ${file} ."
+
+                        // Push the Docker image to the repository
+                        sh "sudo docker push ${dockerRepository}/fin_${value}:${gitBranch}-v${dockerImageTag}"
+                    }
+
+                    // Define a variable with the Docker image tag for later use
+                    env.DOCKER_IMAGE_TAG = dockerImageTag
+
+                }
+            }
+        }
+
+    }
+
+    post {
+        always {
+            echo "Clearing unused data from local manager"
+            sh "sudo docker system prune -f"
+
+        }
+        success {
+            echo "Build and Publish image to Repository Success"
+        }
+        failure {
+            echo "Failed Build and Publish image"
+        }
+        cleanup {
+            echo "Clearing unused docker images"
+            sh "sudo docker image prune -a -f"
+
+            echo "Prune all stopped Docker containes"
+            sh "sudo docker container prune -f"
+
+            echo "Prune all unused Docker volumes"
+            sh "sudo docker volume prune -f"
+        }
+    }
+
+}

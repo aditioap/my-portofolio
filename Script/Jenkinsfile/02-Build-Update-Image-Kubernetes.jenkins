@@ -1,0 +1,123 @@
+def finalImageTag = ""
+def serviceName   = "acq-services"
+def TARGET_NAMESPACES = []
+
+pipeline {
+    agent none
+
+    parameters {
+        choice(
+            name: 'TARGET_ENV',
+            choices: [
+                'dev',
+                'uat'
+            ],
+            description: 'Select deployment environment (MCF & MAF will be updated)'
+        )
+    }
+
+    environment {
+        DOCKER_REGISTRY = 'git.mcf.co.id:5050'
+        IMAGE_NAME      = 'moofi/acquisition.services'
+    }
+
+    stages {
+
+        stage('Prepare Namespace List') {
+            agent { label 'UAT-K8-Runner' }
+            steps {
+                script {
+                    if (params.TARGET_ENV == 'dev') {
+                        TARGET_NAMESPACES = [
+                            'dev-moofi-mcf',
+                            'dev-moofi-maf'
+                        ]
+                    } else if (params.TARGET_ENV == 'uat') {
+                        TARGET_NAMESPACES = [
+                            'uat-moofi-mcf',
+                            'uat-moofi-maf'
+                        ]
+                    }
+
+                    echo "Deploying to namespaces: ${TARGET_NAMESPACES.join(', ')}"
+                }
+            }
+        }
+
+        stage('Checkout & Build Image') {
+            agent { label 'UAT_docker-manager' }
+            steps {
+                script {
+
+                    git branch: "${Branch}",
+                        credentialsId: 'sysadmin',
+                        url: 'https://git.mcf.co.id/moofi/acquisition.services.git'
+
+                    def commitId = sh(
+                        script: "git rev-parse --short HEAD",
+                        returnStdout: true
+                    ).trim()
+
+                    finalImageTag = "${DOCKER_REGISTRY}/${IMAGE_NAME}:${commitId}"
+
+                    def registry_username = "admin"
+                    def registry_password = "4qNKzywxw51qAGUeTpBK"
+                    def registry_url = "https://git.mcf.co.id/api/v4/projects/137/packages/nuget/index.json"
+                    def gitDir = "ACQUISITION.SERVICES"
+
+                    sh "sudo chmod 666 /var/run/docker.sock || true"
+
+                    sh """
+                        sudo docker build \
+                            -f ${gitDir}/Dockerfile \
+                            --build-arg REGISTRY_URL=${registry_url} \
+                            --build-arg REGISTRY_USER=${registry_username} \
+                            --build-arg REGISTRY_PASS=${registry_password} \
+                            -t ${finalImageTag} \
+                            .
+                    """
+
+                    sh """
+                        printf '%s' "${Credential}" | \
+                        sudo docker login ${DOCKER_REGISTRY} \
+                            -u "${Username}" --password-stdin
+                    """
+
+                    sh "sudo docker push ${finalImageTag}"
+                    sh "sudo docker logout ${DOCKER_REGISTRY} || true"
+
+                    echo "Image pushed: ${finalImageTag}"
+                }
+            }
+        }
+
+        stage('Update K8s Deployments') {
+            agent { label 'UAT-K8-Runner' }
+            steps {
+                script {
+                    if (!finalImageTag?.trim()) {
+                        error "finalImageTag is empty! Build/push failed."
+                    }
+
+                    TARGET_NAMESPACES.each { ns ->
+                        sh """
+                            sudo kubectl -n ${ns} \
+                            set image deployment/${serviceName} \
+                            ${serviceName}=${finalImageTag} --record
+                        """
+                        echo "Deployment updated in namespace → ${ns}"
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Deployment completed for ${params.TARGET_ENV.toUpperCase()} (MCF & MAF)"
+        }
+        failure {
+            echo "❌ Pipeline failed. Check logs."
+        }
+    }
+}

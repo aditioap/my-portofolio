@@ -1,0 +1,170 @@
+pipeline {
+    agent {
+        node {
+            label 'PRD-95_docker-manager'
+        }
+    }
+
+    parameters {
+        choice(
+            name: 'SERVICE_NAME',
+            choices: [
+                'fin_bpkb', 'fin_ca', 'fin_cm', 'fin_credits', 'fin_dealerpayment', 'fin_master_trans_type_hierarchy', 'fin_masters', 'fin_cssession', 'fin_miniapi', 'fin_npp', 'fin_oma', 'fin_report', 'fin_termination', 'fin_vertel'
+            ],
+            description: 'Name of the service to deploy (mandatory)'
+        )
+
+        choice(
+            name: 'STACK_PREFIX',
+            choices: [
+                'FINMOOFI-MCF-R4', 'FINMOOFI-MAF-R4'
+            ],
+            description: 'Prefix for the stack name or namespace (e.g., FINMOOFI-MCF-R4 or FINMOOFI-MAF-R4)'
+        )
+
+        string(name: 'IMAGE_TAG', defaultValue: 'latest', description: 'Docker image tag')
+    }
+
+    stages {
+        stage('Validate Parameters') {
+            steps {
+                script {
+                    if (params.SERVICE_NAME.trim().isEmpty()) {
+                        error "SERVICE_NAME parameter cannot be empty."
+                    }
+                    if (params.STACK_PREFIX.trim().isEmpty()) {
+                        error "STACK_PREFIX parameter cannot be empty."
+                    }
+                    echo "Parameters validated successfully."
+                }
+            }
+        }
+
+        stage('Prepare YAML File') {
+            steps {
+                script {
+                    def yamlFile = "${params.SERVICE_NAME}.yml"
+                    def imageRepo = "git.macf.co.id:5050/dev.bs/fincore.service/${params.SERVICE_NAME}"
+                    def updateDirectory = "Update"
+
+                    // Detect environment file
+                    def envFile = ""
+                    def endPoint = ""
+                    def subDomain = ""
+                    def netWork = ""
+                    if (params.STACK_PREFIX.toUpperCase().contains("MCF")) {
+                        envFile = ".mcf.env"
+                        endPoint = "finmoofi-mcf_r4"
+                        subDomain = "api-r4-finmoofi.mcf.co.id"
+                        netWork = "finmoofi-r4-mcf"
+                        subDir = "mcf"
+                    } else if (params.STACK_PREFIX.toUpperCase().contains("MAF")) {
+                        envFile = ".maf.env"
+                        endPoint = "finmoofi-maf_r4"
+                        subDomain = "api-r4-finmoofi.maf.co.id"
+                        netWork = "finmoofi-r4-maf"
+                        subDir = "maf"
+                    } else {
+                        error "Unknown STACK_PREFIX '${params.STACK_PREFIX}'. Must contain either 'MCF' or 'MAF'."
+                    }
+
+                    echo "Using environment file: ${envFile}"
+
+                    // Ensure YAML exists
+                    if (!fileExists(yamlFile)) {
+                        error "YAML file '${yamlFile}' not found in workspace."
+                    }
+
+                    // Replace placeholders
+                    def yamlContent = readFile(yamlFile)
+                        .replace('${IMAGE_REPO}', imageRepo)
+                        .replace('${IMAGE_TAG}', params.IMAGE_TAG)
+                        .replace('${ENV}', envFile)
+                        .replace('${ENDPOINT}', endPoint)
+                        .replace('${SUBDOMAIN}', subDomain)
+                        .replace('${NETWORK}', netWork)
+
+                    // Save updated YAML
+                    sh "mkdir -p ${updateDirectory}/${subDir}"
+                    env.UPDATED_YAML_PATH = "${updateDirectory}/${subDir}/${params.SERVICE_NAME}_updated.yml"
+                    writeFile(file: env.UPDATED_YAML_PATH, text: yamlContent)
+
+                    echo "✅ Updated YAML file created at ${env.UPDATED_YAML_PATH}"
+                }
+            }
+        }
+
+        stage('Deploy Service') {
+            steps {
+                script {
+                    def imageName = "git.macf.co.id:5050/dev.bs/fincore.service/${params.SERVICE_NAME}:${params.IMAGE_TAG}"
+                    def serviceName = "${params.STACK_PREFIX}_${params.SERVICE_NAME}"
+
+                    echo "🚀 Deploying ${serviceName} using ${env.UPDATED_YAML_PATH}"
+                    sh """
+                        sudo docker stack deploy -c ${env.UPDATED_YAML_PATH} \
+                        --with-registry-auth \
+                        ${params.STACK_PREFIX}
+                    """
+
+                    echo "⏳ Waiting 30 seconds for service initialization..."
+                    sleep time: 30, unit: 'SECONDS'
+
+                    // Validation
+                    def runningCountCommand = """
+                        sudo docker service ps ${serviceName} --filter "desired-state=running" --format "{{.Image}} {{.CurrentState}}" | grep -c "^${imageName}"
+                    """
+                    def runningCount = sh(script: runningCountCommand, returnStdout: true).trim().toInteger()
+
+                    if (runningCount <= 0) {
+                        error "Deployment failed: No running tasks found for ${serviceName} using image ${imageName}."
+                    } else {
+                        echo "✅ ${runningCount} running task(s) found for ${serviceName}."
+                    }
+                }
+            }
+        }
+
+
+        stage('Commit & Push Updated YAML') {
+            steps {
+                script {
+                    echo "📦 Committing and pushing ${env.UPDATED_YAML_PATH} to Git repository..."
+                    withCredentials([usernamePassword(credentialsId: 'sysadmin', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                        sh """
+                            git config user.name "sysadmin"
+                            git config user.email "it-sysadmin@mcf.co.id"
+                            git add ${env.UPDATED_YAML_PATH}
+                            git commit -m "Update ${params.SERVICE_NAME} YAML for ${params.STACK_PREFIX} [latest]" || echo "No changes to commit"
+                            git push https://\${GIT_USER}:\${GIT_PASS}@git.mcf.co.id/deploy-production/finmoofi-r4.backend HEAD:main
+                        """
+                    }
+                    echo "✅ YAML file successfully pushed to Git."
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "🎉 Deployment successful! Service: ${params.SERVICE_NAME}, Image: ${params.SERVICE_NAME}:${params.IMAGE_TAG}"
+        }
+        failure {
+            echo "❌ Deployment failed! Attempting rollback..."
+            script {
+                def serviceName = "${params.STACK_PREFIX}_${params.SERVICE_NAME}"
+                sh """
+                    if sudo docker service inspect ${serviceName} >/dev/null 2>&1; then
+                        sudo docker service rollback ${serviceName}
+                    else
+                        echo 'Rollback not possible for ${serviceName}'
+                    fi
+                """
+            }
+        }
+        cleanup {
+            echo "🧹 Cleaning up unused Docker resources..."
+            sh "sudo docker system prune --volumes -f"
+        }
+    }
+}
