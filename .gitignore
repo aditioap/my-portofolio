@@ -1,0 +1,45 @@
+# OS
+# OS
+.DS_Store
+Thumbs.db
+
+# Archives & binaries
+*.zip
+*.exe
+*.msi
+*.iso
+*.tar
+*.tar.gz
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv
+
+# Node / build
+node_modules/
+dist/
+build/
+
+# Secrets & keys
+*.ppk
+*.pem
+*.key
+*.crt
+*.pub
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Terraform / infra cache
+.terraform/
+*.tfstate
+*.tfstate.backup
+
