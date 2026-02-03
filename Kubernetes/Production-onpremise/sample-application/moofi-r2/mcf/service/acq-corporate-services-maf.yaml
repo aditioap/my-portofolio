@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2025-02-04T06:49:25Z"
+  name: acq-corporate-services-maf
+  #namespace: development
+  resourceVersion: "97756415"
+  uid: 1261132f-4d73-46be-a058-68ff001193a5
+spec:
+  clusterIP: 10.106.89.105
+  clusterIPs:
+  - 10.106.89.105
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5105
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: acq-corporate-services-maf
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

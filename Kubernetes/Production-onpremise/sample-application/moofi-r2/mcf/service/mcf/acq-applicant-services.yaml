@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: acq-applicant-services
+  name: acq-applicant-services
+  #namespace: development
+spec:
+  ports:
+  - port: 5090
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: acq-applicant-services
+  type: ClusterIP

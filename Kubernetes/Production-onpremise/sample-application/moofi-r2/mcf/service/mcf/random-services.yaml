@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: random-services
+  #namespace: development
+spec:
+  ports:
+  - port: 5116
+    protocol: TCP
+    targetPort: 5116
+  selector:
+    app: random-services
+  type: ClusterIP

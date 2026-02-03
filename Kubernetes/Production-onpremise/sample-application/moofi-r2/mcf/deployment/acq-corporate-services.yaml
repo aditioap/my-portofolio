@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: acq-corporate-services
+  name: acq-corporate-services
+  #namespace: development
+spec:
+  selector:
+    matchLabels:
+      app: acq-corporate-services
+  template:
+    metadata:
+      labels:
+        app: acq-corporate-services
+    spec:
+      containers:
+      - env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: C_MOBILE
+          valueFrom:
+            configMapKeyRef:
+              key: C_MOBILE
+              name: moofi-cm
+        image: git.mcf.co.id:5050/moofi/acquisition.corporate.service/acquisition.corporate.service:c1b3c55
+        imagePullPolicy: Always
+        name: acq-corporate-services
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

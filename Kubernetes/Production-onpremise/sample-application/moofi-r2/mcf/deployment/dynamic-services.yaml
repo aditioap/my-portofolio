@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dynamic-services
+  name: dynamic-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dynamic-services
+  template:
+    metadata:
+      labels:
+        app: dynamic-services
+    spec:
+      containers:
+      - env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ConnAcquisition
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_ACQUISITION
+              name: moofi-cm
+        - name: C_MOBILE
+          valueFrom:
+            configMapKeyRef:
+              key: C_MOBILE
+              name: moofi-cm
+        - name: CONN_ACQUISITION
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_ACQUISITION
+              name: moofi-cm
+        - name: CONN_MACFDB
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_MACFDB
+              name: moofi-cm
+        - name: ASPNETCORE_URLS
+          value: http://+:80
+        - name: DOM_TEMPO
+          value: http://172.16.91.216:4317
+        - name: DOM_UPLOAD_MINIO
+          value: http://minio-services.uat-moofi-mcf.svc.cluster.local:5095/api/Files/Upload
+        - name: DOM_OCR
+          value: http://ocr-app-service.uat-moofi-mcf.svc.cluster.local:3637/v1/ocrFCL/
+        - name: HOSTNAME_RABITMQ
+          value: rabbitmq-prod.rabbitmq-system.svc.cluster.local
+        - name: USERNAME_RABITMQ
+          valueFrom:
+            configMapKeyRef:
+              key: USERNAME_RABITMQ
+              name: moofi-cm
+        - name: PASSWORD_RABITMQ
+          valueFrom:
+            configMapKeyRef:
+              key: PASSWORD_RABITMQ
+              name: moofi-cm
+        - name: PORT_RABITMQ
+          value: "5672"
+        - name: DOM_FCL_RESULT
+          value: http://fcl-result-services.uat-moofi-mcf.svc.cluster.local:5100/api/v1/services/fclresult/processfclresult
+        - name: CONN_MASTER
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_MASTER
+              name: moofi-cm
+        - name: URL_RIMO_SCORING
+          value: https://das.mcf.co.id
+        - name: BASIC_AUTH_RIMO_USERNAME
+          value: username
+        - name: BASIC_AUTH_RIMO_PASSWORD
+          value: password
+        - name: X_HEADER_RIMO
+          value: secret
+        - name: COMPANY_NAME_ALIAS
+          valueFrom:
+            configMapKeyRef:
+              key: COMPANY_NAME_ALIAS
+              name: moofi-cm
+        - name: QUEUES_RABITMQ
+          value: backGroundProcess3
+        - name: traefik_path
+          value: dynamic-service
+        - name: base_url
+          value: http://mobile.macf.co.id/
+        - name: C_Mongo
+          valueFrom:
+            configMapKeyRef:
+              key: C_Mongo
+              name: moofi-cm
+        - name: D_Mongo
+          valueFrom:
+            configMapKeyRef:
+              key: D_Mongo
+              name: moofi-cm
+        image: git.mcf.co.id:5050/moofi/fcl.services/fcl.services:0da57bd
+        imagePullPolicy: Always
+        name: dynamic-services
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 50m
+            memory: 128Mi
+          requests:
+            cpu: 25m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

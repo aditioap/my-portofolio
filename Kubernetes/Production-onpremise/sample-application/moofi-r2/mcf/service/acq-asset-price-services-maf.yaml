@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2025-02-04T07:58:29Z"
+  name: acq-asset-price-services-maf
+  #namespace: development
+  resourceVersion: "97776731"
+  uid: fe58e744-a922-4787-9fe7-cfde6a8c5634
+spec:
+  clusterIP: 10.97.6.224
+  clusterIPs:
+  - 10.97.6.224
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5106
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: acq-asset-price-services-maf
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: acq-applicant-services
+    version: v1
+  name: acq-applicant-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: acq-applicant-services
+  template:
+    metadata:
+      labels:
+        app: acq-applicant-services
+        version: v1
+    spec:
+      containers:
+      - env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: DOM_UPLOAD_MINIO
+          value: http://minio-services.uat-moofi-mcf.svc.cluster.local:5095/api/Files/Upload
+        - name: CONN_MASTER
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_MASTER
+              name: moofi-cm
+        - name: C_MOBILE
+          valueFrom:
+            configMapKeyRef:
+              key: C_MOBILE
+              name: moofi-cm
+        - name: COMPANY_NAME_ALIAS
+          value: mcf
+        image: git.mcf.co.id:5050/moofi/acquisition.applicant.service/acquisition.applicant.service:dd7e869
+        imagePullPolicy: IfNotPresent
+        name: acq-applicant-services
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 50m
+            memory: 170Mi
+          requests:
+            cpu: 25m
+            memory: 150Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

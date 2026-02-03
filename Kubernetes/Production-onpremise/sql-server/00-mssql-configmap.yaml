@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mssql-db-config
+  namespace: mssql-server  # change if needed
+data:
+  MSSQL_SA_PASSWORD: Password009

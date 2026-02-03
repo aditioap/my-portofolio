@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2025-02-24T07:13:40Z"
+  name: send-out-services-maf
+  #namespace: development
+  resourceVersion: "106183374"
+  uid: c9861472-92f7-43ca-a109-c9f3dc160cdf
+spec:
+  clusterIP: 10.106.54.212
+  clusterIPs:
+  - 10.106.54.212
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5113
+    protocol: TCP
+    targetPort: 3344
+  selector:
+    app: send-out-services-maf
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

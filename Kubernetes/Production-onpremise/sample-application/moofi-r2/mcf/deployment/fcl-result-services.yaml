@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: fcl-result-services
+  name: fcl-result-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fcl-result-services
+  template:
+    metadata:
+      labels:
+        app: fcl-result-services
+    spec:
+      containers:
+      - env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: DOM_SIMILIARITY
+          value: http://similarity-services.uat-moofi-mcf.svc.cluster.local:5099/similarity
+        - name: DOM_DUKCAPIL
+          value: https://dukcapil.maf.co.id
+        - name: DOM_PEFINDO
+          value: http://uat-finmcf:1111/api/v1/external/super?flag1=I3Acvg+m4J7Xszu5+A7CUA==&flag2=ONeGAj3zgmKqFuISM0Ihobv4LyLgo6iq&flag3=ZzSQPsC7dvZ/CHei5BKeoA/SB90E53bY+/sbOjJjRPs=
+        - name: CONN_MONGO_DUKCAPIL
+          value: 7iOd63L4kciN6Q6hCDOPfCyNghWoIDY7TMnbEiHXYXk1B6MqmrTNDUC4scPzPvj8gvrfQu//no6F87bbc/pTOkGONvoCoHVobwp8wABvRudG16ISjqL0e5UEOCNKPAQ+h2U9YArRi6U=
+        - name: CONN_MONGO_MASTER
+          value: 7iOd63L4kciN6Q6hCDOPfCyNghWoIDY7TMnbEiHXYXk1B6MqmrTNDUC4scPzPvj8gvrfQu//no6F87bbc/pTOkGONvoCoHVobwp8wABvRudG16ISjqL0e6nZSNCYXIAEmOeu0fv9TNw=
+        - name: DB_MONGO_DUKCAPIL
+          value: OBFnql261pmCkP5jFh6DwQ==
+        - name: DB_MONGO_MASTER
+          value: d8pMG0t+ga8Y6GyhUEVXag==
+        - name: CONN_ACQUISITION
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_ACQUISITION
+              name: moofi-cm
+        - name: C_MOBILE
+          valueFrom:
+            configMapKeyRef:
+              key: C_MOBILE
+              name: moofi-cm
+        - name: HOSTNAME_RABITMQ
+          value: rabbitmq-prod.rabbitmq-system.svc.cluster.local
+        - name: USERNAME_RABITMQ
+          valueFrom:
+            configMapKeyRef:
+              key: USERNAME_RABITMQ
+              name: moofi-cm
+        - name: PASSWORD_RABITMQ
+          valueFrom:
+            configMapKeyRef:
+              key: PASSWORD_RABITMQ
+              name: moofi-cm
+        - name: PORT_RABITMQ
+          value: "5672"
+        - name: CONN_MACFDB
+          value: uMvTxS/Jq1Tn1yTjQ7Dbid/bvTZ4O3eWZfZnPc7UvackOEV9sXJqEbVMOB2y/K9E59AtdW6jeZ7nSWrmlVnRxx+ul940mFwyFVOX0+HfrZr+lICkhz+BiUPe4k0d2MnPa42W8/tzen3YIv+ygDvvIOLLxgiIGKa8Cpt79yIN08twjsnUYDP/vlo1WhX71CWc7P+B+FWWPt9ly3UVjRsxR53D3+KV/JpYXltBRfLAasi2ZhPG/qWV3MpliJ3fbV/3uC+gokBuwVSRP5c5P3KFmcmF7+h3EPtn
+        - name: QUEUES_RABITMQ
+          valueFrom:
+            configMapKeyRef:
+              key: QUEUES_RABITMQ
+              name: moofi-cm
+        - name: COMPANY_NAME_ALIAS
+          valueFrom:
+            configMapKeyRef:
+              key: COMPANY_NAME_ALIAS
+              name: moofi-cm
+        - name: CONN_MASTER
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_MASTER
+              name: moofi-cm
+        image: git.mcf.co.id:5050/moofi/fcl.result.services/fcl.result.services:585803e
+        imagePullPolicy: IfNotPresent
+        name: fcl-result-services
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 50m
+            memory: 128Mi
+          requests:
+            cpu: 25m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

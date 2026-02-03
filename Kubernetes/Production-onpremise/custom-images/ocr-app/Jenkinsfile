@@ -1,0 +1,67 @@
+def rootDir = []
+def finSrvc = []
+
+pipeline {
+    agent any
+    stages {
+
+        stage('Check Dockerfile'){
+            steps {
+                script {
+                    def output
+
+                    echo 'Executing default steps...'
+                    output = sh(script: 'find . -iname Dockerfile', returnStdout: true).trim().split('\n')
+                    echo "${output}"
+                    output.each { item ->
+                        echo "${item}"
+                        rootDir.add(item)
+
+                    }
+                }
+            }
+
+        }
+
+        stage('List Dockerfiles') {
+            steps { 
+                script {
+                    rootDir.each { item ->
+                        echo "List Dockerfiles yg akan dibuild: ${item}"
+                    }
+                }
+            }
+        }
+ 
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    def dockerRepository = 'git.mcf.co.id:5050/macf/desc-api'
+                    def file = rootDir[0]
+                    sh "docker login git.mcf.co.id:5050 -u khanif.fatoni -p VcosuUfzuTZ4j93TqUmh"
+                    echo "docker build -t ${dockerRepository}/account:0.0.1 -f ${file} ."
+                    sh "docker build -t ${dockerRepository}/account:0.0.1 -f ${file} ."
+                    sh "docker push ${dockerRepository}/account:0.0.1"
+                    sh "docker logout"
+                }
+            }
+        }
+
+    }
+
+    post {
+        always {            
+            echo "Clearing unused data from local manager"
+        }
+        success {
+            echo "Build and Publish image to Repository Success"
+        }
+        failure {
+            echo "Failed Build and Publish image"
+        }
+        cleanup {
+            echo "Clearing unused data from local manager"            
+        }
+    }
+
+}

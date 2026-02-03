@@ -1,0 +1,101 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: quickstart
+  namespace: elastic-system
+spec:
+  version: 9.2.4
+  image: git.mcf.co.id:5050/thirdparty/elasticsearch/elasticsearch:9.2.4
+
+  # =========================
+  # HTTP SETTINGS (IMPORTANT)
+  # =========================
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true   # ✅ HTTP only (no TLS) on port 9200
+
+  nodeSets:
+
+  # =========================
+  # MASTER NODES
+  # =========================
+  - name: master
+    count: 3
+    config:
+      node.roles: ["master"]
+      node.store.allow_mmap: false
+      # ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+
+    podTemplate:
+      spec:
+        imagePullSecrets:
+        - name: cred-sysadmin
+        containers:
+        - name: elasticsearch
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "2Gi"
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+
+  # =========================
+  # DATA NODES
+  # =========================
+  - name: data
+    count: 3
+    config:
+      node.roles: ["data", "data_content", "data_hot"]
+      node.store.allow_mmap: false
+      # ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+
+    podTemplate:
+      spec:
+        imagePullSecrets:
+        - name: cred-sysadmin
+        containers:
+        - name: elasticsearch
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "2Gi"
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName: rook-ceph-block
+        resources:
+          requests:
+            storage: 200Gi
+
+  # =========================
+  # INGEST NODES
+  # =========================
+  - name: ingest
+    count: 2
+    config:
+      node.roles: ["ingest"]
+      node.store.allow_mmap: false
+      # ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+      
+
+    podTemplate:
+      spec:
+        imagePullSecrets:
+        - name: cred-sysadmin
+        containers:
+        - name: elasticsearch
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "2Gi"
+            limits:
+              cpu: "1"
+              memory: "2Gi"

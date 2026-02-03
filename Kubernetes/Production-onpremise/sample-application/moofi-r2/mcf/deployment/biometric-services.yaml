@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: biometric-services
+    version: v1
+  name: biometric-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: biometric-services
+  template:
+    metadata:
+      labels:
+        app: biometric-services
+        version: v1
+    spec:
+      containers:
+      - env:
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: SPRING_DATASOURCE_URL
+              name: moofi-cm
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              key: SPRING_DATASOURCE_USERNAME
+              name: moofi-cm
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: SPRING_DATASOURCE_PASSWORD
+              name: moofi-cm
+        - name: SPRING_DEVTOOLS_RESTART_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              key: SPRING_DEVTOOLS_RESTART_ENABLED
+              name: moofi-cm
+        image: git.mcf.co.id:5050/moofi/biometric.services:ca500a0
+        imagePullPolicy: IfNotPresent
+        name: biometric-services
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

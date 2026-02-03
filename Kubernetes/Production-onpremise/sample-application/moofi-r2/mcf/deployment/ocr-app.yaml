@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ocr-app
+  name: ocr-app
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ocr-app
+  template:
+    metadata:
+      labels:
+        app: ocr-app
+    spec:
+      containers:
+      - image: git.mcf.co.id:5050/nur.hamid/ocr-app/account:0.0.3
+        imagePullPolicy: IfNotPresent
+        name: ocr-app
+        ports:
+        - containerPort: 3637
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

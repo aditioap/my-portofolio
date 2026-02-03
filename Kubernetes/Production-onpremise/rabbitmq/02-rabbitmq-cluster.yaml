@@ -1,0 +1,48 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  namespace: rabbitmq-system
+  name: rabbitmq-prod
+spec:
+  image: git.mcf.co.id:5050/moofi/moofi-production-kube/rabbitmq:4.0.5-management
+  imagePullSecrets:
+    - name: cred-sysadmin
+  replicas: 2
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 100Mi
+#    requests:
+#      cpu: 500m
+#      memory: 500Mi
+#    limits:
+#      cpu: 2
+#      memory: 2Gi
+  rabbitmq:
+    additionalConfig: |
+      log.console.level = info
+      default_user= sysadmin
+      default_pass = sysadmin
+      default_user_tags.administrator = true
+      default_user_tags.management = true
+      default_permissions.configure = .*
+      default_permissions.read = .*
+      default_permissions.write = .*
+    additionalPlugins:
+      - rabbitmq_management
+      - rabbitmq_prometheus
+  terminationGracePeriodSeconds: 60
+  persistence:
+    storageClassName: rook-ceph-block
+    storage: 20Gi
+  service:
+    type: ClusterIP
+  override:
+    service:
+      spec:
+        ports:
+        - port: 5672
+          targetPort: 5672

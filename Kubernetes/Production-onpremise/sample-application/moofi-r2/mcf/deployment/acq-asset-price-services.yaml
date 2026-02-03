@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: acq-asset-price-services
+  name: acq-asset-price-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: acq-asset-price-services
+  template:
+    metadata:
+      labels:
+        app: acq-asset-price-services
+    spec:
+      containers:
+      - env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: C_MOBILE
+          valueFrom:
+            configMapKeyRef:
+              key: C_MOBILE
+              name: moofi-cm
+        - name: CONN_ACQUISITION
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_ACQUISITION
+              name: moofi-cm
+        - name: DOM_BANK_ACCOUNT
+          value: https://kirimdoku.com/v2/api/cashin/inquiry
+        - name: CONN_MACFDB
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_MACFDB
+              name: moofi-cm
+        - name: CONN_EPMAFDB
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_EPMAFDB
+              name: moofi-cm
+        - name: CONN_EPMCFDB
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_EPMCFDB
+              name: moofi-cm
+        - name: CONN_MASTER
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_MASTER
+              name: moofi-cm
+        - name: DOM_SIMILARITY_WORD
+          value: http://similarity-services.uat-moofi-mcf.svc.cluster.local:5099/similarityword
+        image: git.mcf.co.id:5050/moofi/acquisition.asset.price.services/acquisition.asset.price.services:b659b7b
+        imagePullPolicy: IfNotPresent
+        name: acq-asset-price-services
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 65Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

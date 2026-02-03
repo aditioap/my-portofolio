@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-11-08T06:30:33Z"
+  name: openproject-svc
+  #namespace: development
+  resourceVersion: "60878899"
+  uid: c8cf5641-1e33-4aae-8e20-a85d53d6a81d
+spec:
+  clusterIP: 10.100.148.29
+  clusterIPs:
+  - 10.100.148.29
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - nodePort: 30332
+    port: 8000
+    protocol: TCP
+    targetPort: 80
+  selector:
+    name: openproject
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}

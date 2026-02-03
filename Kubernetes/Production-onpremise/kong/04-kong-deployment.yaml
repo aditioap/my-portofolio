@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kong
+  namespace: kong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kong
+  template:
+    metadata:
+      labels:
+        app: kong
+    spec:
+      imagePullSecrets:
+        - name: cred-sysadmin
+      initContainers:
+        - args:
+          - migrations
+          - bootstrap
+          - --vv
+          command:
+          - kong
+          env:
+            - name: KONG_DATABASE
+              value: postgres
+            - name: KONG_PG_HOST
+              value: kong-database.kong.svc.cluster.local
+            - name: KONG_PG_DATABASE
+             # value: kong
+              valueFrom:
+                configMapKeyRef:
+                  key: KONG_PG_DATABASE
+                  name: kong-db-config
+            - name: KONG_PG_USER
+              #value: macf
+              valueFrom:
+                configMapKeyRef:
+                  key: KONG_PG_USER
+                  name: kong-db-config
+            - name: KONG_PG_PASSWORD
+              #value: macfjayajaya
+              valueFrom:
+                configMapKeyRef:
+                  key: KONG_PG_PASSWORD
+                  name: kong-db-config
+          image: git.mcf.co.id:5050/moofi/moofi-production-kube/kong:2.7
+          imagePullPolicy: IfNotPresent
+          name: migrations
+      containers:
+        - env:
+            - name: KONG_DATABASE
+              value: postgres
+            - name: KONG_PG_HOST
+              value: kong-database.kong.svc.cluster.local
+            - name: KONG_PG_DATABASE
+              #value: kong
+              valueFrom:
+                configMapKeyRef:
+                  key: KONG_PG_DATABASE
+                  name: kong-db-config
+            - name: KONG_PG_USER
+              #value: macf
+              valueFrom:
+                configMapKeyRef:
+                  key: KONG_PG_USER
+                  name: kong-db-config
+            - name: KONG_PG_PASSWORD
+              #value: macfjayajaya
+              valueFrom:
+                configMapKeyRef:
+                  key: KONG_PG_PASSWORD
+                  name: kong-db-config
+            - name: KONG_DECLARATIVE_CONFIG
+              value: /kong/kong.yml
+            - name: KONG_PROXY_ACCESS_LOG
+              value: /dev/stdout
+            - name: KONG_ADMIN_ACCESS_LOG
+              value: /dev/stdout
+            - name: KONG_PROXY_ERROR_LOG
+              value: /dev/stderr
+            - name: KONG_ADMIN_ERROR_LOG
+              value: /dev/stderr
+            - name: KONG_ADMIN_LISTEN
+              value: 0.0.0.0:8001, 0.0.0.0:8444 ssl
+            - name: KONG_PLUGINS
+              value: bundled,token-validation
+          image: git.mcf.co.id:5050/moofi/moofi-production-kube/kong:2.7
+          imagePullPolicy: IfNotPresent
+          name: kong
+          ports:
+            - containerPort: 8000
+              name: proxy
+              protocol: TCP
+            - containerPort: 8443
+              name: proxy-ssl
+              protocol: TCP
+            - containerPort: 8001
+              name: admin
+              protocol: TCP
+            - containerPort: 8444
+              name: admin-ssl
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /usr/local/share/lua/5.1/kong/plugins/token-validation
+              name: kong-custom-plugin
+      volumes:
+        - configMap:
+            name: kong-custom-plugin
+          name: kong-custom-plugin

@@ -1,0 +1,9 @@
+# admin-user-token.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sysadmin-token
+  namespace: kubernetes-dashboard
+  annotations:
+    kubernetes.io/service-account.name: sysadmin
+type: kubernetes.io/service-account-token

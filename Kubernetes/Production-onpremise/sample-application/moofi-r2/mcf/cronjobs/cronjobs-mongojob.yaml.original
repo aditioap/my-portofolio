@@ -1,0 +1,52 @@
+apiVersion: v1
+items:
+- apiVersion: batch/v1
+  kind: CronJob
+  metadata:
+    name: mongo-job
+    namespace: prd-moofi-r2
+  spec:
+    concurrencyPolicy: Allow
+    failedJobsHistoryLimit: 3
+    jobTemplate:
+      spec:
+        template:
+          spec:
+            containers:
+            - env:
+              - name: ASPNETCORE_ENVIRONMENT
+                value: Development
+              - name: C_MOBILE
+                valueFrom:
+                  configMapKeyRef:
+                    key: C_MOBILE
+                    name: moofi-production-cm
+              - name: CONN_MASTER
+                valueFrom:
+                  configMapKeyRef:
+                    key: CONN_MASTER
+                    name: moofi-production-cm
+              - name: C_Mongo
+                valueFrom:
+                  configMapKeyRef:
+                    key: C_Mongo
+                    name: moofi-production-cm
+              - name: D_Mongo
+                valueFrom:
+                  configMapKeyRef:
+                    key: D_Mongo
+                    name: moofi-production-cm
+              image: git.mcf.co.id:5050/moofi/mongo.job/mongo.job:4bd4fa0
+              imagePullPolicy: Always
+              name: mongo-job
+              resources:
+                limits:
+                  cpu: 100m
+                  memory: 128Mi
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+            imagePullSecrets:
+            - name: gitlab-mongo-job-secret
+    schedule: 0 0 * * *
+    successfulJobsHistoryLimit: 3

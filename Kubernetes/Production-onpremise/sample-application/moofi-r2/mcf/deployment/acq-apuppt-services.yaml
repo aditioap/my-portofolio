@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: acq-apuppt-services
+  name: acq-apuppt-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: acq-apuppt-services
+  template:
+    metadata:
+      labels:
+        app: acq-apuppt-services
+    spec:
+      containers:
+      - env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: CONN_MASTER
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_MASTER
+              name: moofi-cm
+        - name: C_MOBILE
+          valueFrom:
+            configMapKeyRef:
+              key: C_MOBILE
+              name: moofi-cm
+        image: git.mcf.co.id:5050/moofi/acquisition.apuppt.services/acquisition.apuppt.services:e2d4597
+        imagePullPolicy: IfNotPresent
+        name: acq-apuppt-services
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 50m
+            memory: 170Mi
+          requests:
+            cpu: 25m
+            memory: 150Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

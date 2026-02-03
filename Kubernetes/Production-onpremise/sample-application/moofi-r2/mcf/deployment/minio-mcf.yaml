@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: minio
+  name: minio
+  # namespace: prod-mcf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      imagePullSecrets:
+        - name: cred-sysadmin
+      containers:
+        - name: minio
+          image: git.mcf.co.id:5050/moofi/moofi-production-kube/minio:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/bash
+            - -c
+          args:
+            - minio server /storage --console-address :9001
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  key: ACCESS_KEY
+                  name: minio-secret
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: SECRET_KEY
+                  name: minio-secret
+          ports:
+            - containerPort: 9000
+              protocol: TCP
+          volumeMounts:
+            - name: minio-storage
+              mountPath: /storage
+      volumes:
+        - name: minio-storage
+          persistentVolumeClaim:
+            claimName: minio-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minio-pvc
+  # namespace: prod-mcf
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi   # adjust capacity as needed
+  storageClassName: rook-ceph-block

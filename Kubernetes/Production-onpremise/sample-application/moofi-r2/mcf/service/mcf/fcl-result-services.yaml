@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fcl-result-services
+  #namespace: development
+spec:
+  ports:
+  - port: 5100
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: fcl-result-services
+  type: ClusterIP

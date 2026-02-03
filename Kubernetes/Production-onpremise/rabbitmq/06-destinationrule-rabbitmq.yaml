@@ -1,0 +1,10 @@
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: rabbitmq
+  namespace: rabbitmq-system
+spec:
+  host: rabbitmq-prod.rabbitmq-system.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: DISABLE

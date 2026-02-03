@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: acq-services
+    version: v1
+  name: acq-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: acq-services
+  template:
+    metadata:
+      labels:
+        app: acq-services
+        version: v1
+    spec:
+      containers:
+      - env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: C_MOBILE
+          valueFrom:
+            configMapKeyRef:
+              key: C_MOBILE
+              name: moofi-cm
+        - name: CONN_ACQUISITION
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_ACQUISITION
+              name: moofi-cm
+        - name: CONN_MASTER
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_MASTER
+              name: moofi-cm
+        - name: NEOSCORE_URL
+          value: http://score.neokarya.com/v2/score_card/html-pro/
+        - name: NEOSCORE_TOKEN
+          value: 0t77mYPNFJbskWOy6Q6nRoe4ZPnFNy4H3nlhhEQxCoTGiVSF3U
+        - name: DOM_TEMPO
+          value: http://172.16.91.216:4317
+        - name: ASPNETCORE_URLS
+          value: http://+:80
+        - name: COMPANY_NAME_ALIAS
+          value: mcf
+        image: git.mcf.co.id:5050/moofi/acquisition.services/acquisition.services:f4423d0
+        imagePullPolicy: IfNotPresent
+        name: acq-services
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: similarity-services
+  name: similarity-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: similarity-services
+  template:
+    metadata:
+      labels:
+        app: similarity-services
+    spec:
+      containers:
+      - env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: CONN_MASTER
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_MASTER
+              name: moofi-cm
+        - name: C_MOBILE
+          valueFrom:
+            configMapKeyRef:
+              key: C_MOBILE
+              name: moofi-cm
+        - name: MONGO_URI
+          valueFrom:
+            configMapKeyRef:
+              key: MONGO_URI
+              name: moofi-cm
+        - name: COMPANY_NAME_ALIAS
+          valueFrom:
+            configMapKeyRef:
+              key: COMPANY_NAME_ALIAS
+              name: moofi-cm
+        image: git.mcf.co.id:5050/moofi/similiarity/similiarity:815c371
+        imagePullPolicy: IfNotPresent
+        name: similarity-services
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

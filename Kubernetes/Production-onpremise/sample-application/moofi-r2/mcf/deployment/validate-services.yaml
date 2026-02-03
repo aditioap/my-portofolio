@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: validate-services
+  name: validate-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: validate-services
+  template:
+    metadata:
+      labels:
+        app: validate-services
+    spec:
+      containers:
+      - env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: C_MOBILE
+          valueFrom:
+            configMapKeyRef:
+              key: C_MOBILE
+              name: moofi-cm
+        - name: COMPANY_NAME_ALIAS
+          valueFrom:
+            configMapKeyRef:
+              key: COMPANY_NAME_ALIAS
+              name: moofi-cm
+        image: git.mcf.co.id:5050/moofi/validate.services/validate.services:f26533f
+        imagePullPolicy: IfNotPresent
+        name: validate-services
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

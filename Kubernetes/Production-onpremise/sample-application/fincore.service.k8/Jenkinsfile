@@ -1,0 +1,180 @@
+pipeline {
+   agent {
+        node {
+            label 'UAT-K8-Runner'  // matches the label you gave to k8-master01
+        }
+    }
+
+    parameters {
+        choice(
+            name: 'ENVIRONMENT',
+            choices: ['MCF', 'MAF'],
+            description: 'Select deployment environment'
+        )
+        choice(
+            name: 'SERVICENAME',
+            choices: [
+                'BPKB', 'CA', 'CM', 'CREDITS', 'CSSESSION', 'CREDITSANALYST',
+                'DEALERPAYMENT', 'MASTERS', 'MASTER_TRANS_TYPE_HIERARCHY',
+                'MINIAPI', 'NPP', 'OMA', 'REPORT', 'TERMINATION', 'VERTEL', 'SLIKOJK'
+            ],
+            description: 'Select a service name from the dropdown'
+        )
+        string(name: 'IMAGE_TAG', defaultValue: '',  description: 'Set image tag (required)')
+    }
+
+    environment {
+        KUBECONFIG = "${WORKSPACE}/kubeconfig"
+        KUBE_NAMESPACE = "uat-${params.ENVIRONMENT.toLowerCase()}-r4" // e.g., uat-mcf, uat-maf
+        KUBE_SERVICE = "fin_${params.SERVICENAME.toLowerCase()}" // e.g, fin_bpkb, fin_ca
+        IMAGE = "git.mcf.co.id:5050/dev.bs/fincore.service/${KUBE_SERVICE}:${params.IMAGE_TAG}"
+        K8S_DIR = "deployment" //depoyment directory
+        CURRENT_IMAGE = ''
+        KUBE_DEPLOYMENT_NAME = "fin-${params.SERVICENAME.toLowerCase().replace('_', '-')}-services"
+    }
+
+    stages {
+
+        stage('Validate Parameters') {
+            steps {
+                script {
+                    if (!params.IMAGE_TAG?.trim()) {
+                        error("IMAGE_TAG cannot be empty. Please provide a valid image tag.")
+                    }
+                   
+                    if (!params.SERVICENAME?.trim()) {
+                        error("SERVICENAME cannot be empty. Please select a valid service.")
+                    }
+        
+                    if (!params.ENVIRONMENT?.trim()) {
+                        error("ENVIRONMENT cannot be empty. Please select an environment.")
+                    }                    
+                }
+            }
+        }
+
+
+        stage('Prepare Kubeconfig') {
+            steps {
+                withCredentials([file(credentialsId: 'k8-admin-95_15', variable: 'KUBECONFIG')]) {
+                    sh 'sudo kubectl config get-contexts'
+                }
+            }
+        }
+
+
+        stage('Backup Current Image') {
+            steps {
+                script {
+                    CURRENT_IMAGE = sh(
+                        script: "sudo kubectl get deployment ${KUBE_DEPLOYMENT_NAME} -n ${KUBE_NAMESPACE} -o jsonpath='{.spec.template.spec.containers[0].image}'",
+                        returnStdout: true
+                    ).trim()
+                    echo "Current image: ${CURRENT_IMAGE}"
+                }
+            }
+        }
+
+        stage('Update Image') {
+          steps {
+            sh """
+            # Step: Replace with the new one
+            echo "Replacing image line in YAML..."
+            sed -i "s|^ *image: .*|          image: ${IMAGE}|" ${K8S_DIR}/deployment-${KUBE_SERVICE}.yaml
+            """
+          }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                withCredentials([file(credentialsId: 'k8-admin-95_15', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        echo "Deploying to namespace: $KUBE_NAMESPACE"
+
+                        sudo kubectl apply -n $KUBE_NAMESPACE -f deployment/deployment-${KUBE_SERVICE}.yaml			
+                    '''
+                }
+            }
+        }
+        
+        stage('Validate Deployment & Rollback if Failed') {
+            steps {
+                script {
+                    // Define rollback logic inline
+                    def rollbackDeployment = {
+                        echo "Rolling back to previous deployment revision..."
+                        sh "sudo kubectl rollout undo deployment/${KUBE_DEPLOYMENT_NAME} -n ${KUBE_NAMESPACE}"
+                    }
+        
+                    echo "Waiting for rollout to complete..."
+                    def rolloutStatus = sh(
+                        script: "sudo kubectl rollout status deployment/${KUBE_DEPLOYMENT_NAME} -n ${KUBE_NAMESPACE} --timeout=300s",
+                        returnStatus: true
+                    )
+        
+                    if (rolloutStatus != 0) {
+                        echo "Rollout failed. Initiating rollback..."
+                        rollbackDeployment()
+                        error("Deployment failed during rollout. Rolled back.")
+                    }
+        
+                    echo "Validating pod status..."
+                    def success = false
+                    for (int i = 0; i < 24; i++) {
+                        sleep 5
+        
+                        def podInfo = sh(
+                            script: "sudo kubectl get pods -n ${KUBE_NAMESPACE} -l app=${KUBE_DEPLOYMENT_NAME} -o json",
+                            returnStdout: true
+                        ).trim()
+        
+                        def json = readJSON text: podInfo
+                        def hasRunning = false
+                        def hasError = false
+                        def errorMessages = []
+        
+                        for (pod in json.items) {
+                            def status = pod.status.phase
+                            def containerStatuses = pod.status.containerStatuses ?: []
+        
+                            if (status == "Running") {
+                                hasRunning = true
+                            }
+        
+                            for (container in containerStatuses) {
+                                if (container.state.waiting) {
+                                    def reason = container.state.waiting.reason
+                                    if (reason in ["ImagePullBackOff", "ErrImagePull", "InvalidImageName"]) {
+                                        hasError = true
+                                        errorMessages << "${pod.metadata.name}: ${reason}"
+                                    }
+                                }
+                            }
+                        }
+        
+                        if (hasError) {
+                            echo "Detected image pull errors:"
+                            errorMessages.each { echo it }
+                            rollbackDeployment()
+                            error("Deployment failed due to image pull errors. Rolled back.")
+                        }
+        
+                        if (hasRunning) {
+                            echo "At least one pod is Running. Continuing..."
+                            success = true
+                            break
+                        }
+                    }
+        
+                    if (!success) {
+                        echo "Pods did not reach running state in time. Rolling back..."
+                        rollbackDeployment()
+                        error("Deployment failed: pods stuck in pending/creating state. Rolled back.")
+                    }
+        
+                    echo "Deployment validation passed."
+                }
+            }
+        }
+    }
+}

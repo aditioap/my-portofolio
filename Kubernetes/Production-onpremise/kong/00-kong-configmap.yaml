@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kong-db-config
+  namespace: kong  # change if needed
+data:
+  POSTGRES_USER: sysadmin
+  KONG_PG_USER: sysadmin
+  POSTGRES_PASSWORD: sysadmin
+  KONG_PG_PASSWORD: sysadmin
+  POSTGRES_DB: kong
+  KONG_PG_DATABASE: kong

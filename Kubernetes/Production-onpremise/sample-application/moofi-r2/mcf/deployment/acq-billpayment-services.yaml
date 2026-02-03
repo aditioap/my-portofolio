@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: acq-billpayment-services
+  name: acq-billpayment-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: acq-billpayment-services
+  template:
+    metadata:
+      labels:
+        app: acq-billpayment-services
+    spec:
+      containers:
+      - env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: CONN_MASTER
+          valueFrom:
+            configMapKeyRef:
+              key: CONN_MASTER
+              name: moofi-cm
+        - name: C_MOBILE
+          valueFrom:
+            configMapKeyRef:
+              key: C_MOBILE
+              name: moofi-cm
+        - name: DOM_UPLOAD_MINIO
+          value: http://172.16.91.33:30720/api/Files/Upload
+        image: git.mcf.co.id:5050/moofi/acquisition.billpayment.service/acquisition.billpayment.service:c6c696c
+        imagePullPolicy: IfNotPresent
+        name: acq-billpayment-services
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

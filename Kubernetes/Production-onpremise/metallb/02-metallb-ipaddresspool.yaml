@@ -1,0 +1,9 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: maf-prod
+  namespace: metallb-system
+spec:
+  addresses:
+  - 172.16.95.252-172.16.95.254
+  autoAssign: true

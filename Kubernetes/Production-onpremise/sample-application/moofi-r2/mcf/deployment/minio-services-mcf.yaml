@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: minio-services
+  name: minio-services
+  namespace: uat-moofi-mcf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio-services
+  template:
+    metadata:
+      labels:
+        app: minio-services
+    spec:
+      containers:
+        - env:
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  key: ASPNETCORE_ENVIRONMENT
+                  name: moofi-cm
+            - name: Endpoint
+              value: minio-service-api.uat-moofi-mcf.svc.cluster.local:9000
+            - name: AccessKey
+              valueFrom:
+                configMapKeyRef:
+                  key: MINIO_ACCESS_KEY
+                  name: moofi-cm
+            - name: SecretKey
+              valueFrom:
+                configMapKeyRef:
+                  key: MINIO_SECRET_KEY
+                  name: moofi-cm
+            - name: UseSSL
+              value: 'false'
+          image: git.mcf.co.id:5050/moofi/minio.services/minio.services:d85d37e
+          imagePullPolicy: IfNotPresent
+          name: minio-services
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+      imagePullSecrets:
+        - name: cred-sysadmin

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: veriface-services
+    version: v1
+  name: veriface-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: veriface-services
+  template:
+    metadata:
+      labels:
+        app: veriface-services
+        version: v1
+    spec:
+      containers:
+      - env:
+        - name: PYTHONDONTWRITEBYTECODE
+          value: "1"
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        - name: VIRTUAL_ENV
+          value: /opt/venv
+        image: git.mcf.co.id:5050/mobile/veriface:f93a63f
+        imagePullPolicy: IfNotPresent
+        name: veriface-services
+        ports:
+        - containerPort: 5115
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

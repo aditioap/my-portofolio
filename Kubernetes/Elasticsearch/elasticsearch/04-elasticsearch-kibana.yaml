@@ -1,0 +1,54 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: quickstart
+  namespace: elastic-system
+  annotations:
+    kibana.k8s.elastic.co/image: git.mcf.co.id:5050/thirdparty/elasticsearch/kibana:9.2.4-v1
+spec:
+  version: 9.2.4
+  image: git.mcf.co.id:5050/thirdparty/elasticsearch/kibana:9.2.4-v1
+  count: 1
+
+  elasticsearchRef:
+    name: quickstart
+
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true   # ✅ TLS enabled value is false (good)
+
+  podTemplate:
+    spec:
+      imagePullSecrets:
+        - name: cred-sysadmin
+
+      containers:
+        - name: kibana
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "1Gi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+
+          env:
+            - name: NODE_OPTIONS
+              value: "--max-old-space-size=768"
+
+          # readinessProbe:
+          #   httpGet:
+          #     path: /api/status
+          #     port: 5601
+          #     scheme: HTTPS
+          #   initialDelaySeconds: 30
+          #   periodSeconds: 10
+
+          # livenessProbe:
+          #   httpGet:
+          #     path: /api/status
+          #     port: 5601
+          #     scheme: HTTPS
+          #   initialDelaySeconds: 60
+          #   periodSeconds: 20

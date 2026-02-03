@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: random-services
+    version: v1
+  name: random-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: random-services
+  template:
+    metadata:
+      labels:
+        app: random-services
+        version: v1
+    spec:
+      containers:
+      - env:
+        - name: COMPANY_NAME_ALIAS
+          valueFrom:
+            configMapKeyRef:
+              key: COMPANY_NAME_ALIAS
+              name: moofi-cm
+        - name: GOCONN_EP
+          valueFrom:
+            configMapKeyRef:
+              key: GOCONN_EP
+              name: moofi-cm
+        - name: GOCONN_MOB
+          valueFrom:
+            configMapKeyRef:
+              key: GOCONN_MOB
+              name: moofi-cm
+        - name: DOM_MINIO
+          valueFrom:
+            configMapKeyRef:
+              key: DOM_MINIO
+              name: moofi-cm
+        - name: DOM_VERIFACE
+          valueFrom:
+            configMapKeyRef:
+              key: DOM_VERIFACE
+              name: moofi-cm
+        - name: GIN_MODE
+          value: release
+        - name: ENV
+          value: uat
+        image: git.mcf.co.id:5050/moofi/random.services/random.services:ac1d62a
+        imagePullPolicy: IfNotPresent
+        name: random-services
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

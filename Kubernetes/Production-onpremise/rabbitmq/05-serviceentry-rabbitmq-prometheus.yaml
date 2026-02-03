@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: rabbitmq-prometheus
+  namespace: rabbitmq-system
+spec:
+  hosts:
+  - rabbitmq-prod.rabbitmq-system.svc.cluster.local
+  ports:
+  - number: 15692
+    name: prometheus
+    protocol: TCP
+  resolution: NONE

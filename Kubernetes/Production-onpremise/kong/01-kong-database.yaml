@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: kong-database
+  name: kong-database
+  namespace: kong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kong-database
+  serviceName: kong-database
+  template:
+    metadata:
+      labels:
+        app: kong-database
+    spec:
+      imagePullSecrets:
+        - name: cred-sysadmin
+      containers:
+        - env:
+            - name: POSTGRES_USER
+              #value: macf
+              valueFrom:
+                configMapKeyRef:
+                  name: kong-db-config
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              #value: macfjayajaya
+              valueFrom:
+                configMapKeyRef:
+                  name: kong-db-config
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              #value: kong
+              valueFrom:
+                configMapKeyRef:
+                  name: kong-db-config
+                  key: POSTGRES_DB
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          image: git.mcf.co.id:5050/moofi/moofi-production-kube/postgres:9.5
+          imagePullPolicy: IfNotPresent
+          name: postgres
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: kong-db-datadir
+              subPath: pgdata
+## Configuration from Cloud Alibaba ####
+#      volumes:                        #
+#        - name: kong-db-datadir       #
+#          persistentVolumeClaim:      #
+#            claimName: kong-db-datadir#
+########################################
+  volumeClaimTemplates:
+    - metadata: 
+        name: kong-db-datadir
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: rook-ceph-block
+        resources:
+          requests:
+            storage: 10Gi

@@ -1,0 +1,6 @@
+# admin-user-sa.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sysadmin
+  namespace: kubernetes-dashboard

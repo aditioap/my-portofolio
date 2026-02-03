@@ -1,0 +1,68 @@
+apiVersion: v1
+data:
+  handler.lua: |
+    -- /usr/local/share/lua/5.1/kong/plugins/token-validation/handler.lua
+
+    local TokenValidation = {
+      PRIORITY = 1000,
+      VERSION = "1.0",
+    }
+
+    function TokenValidation:access(conf)
+       -- Ambil header Authorization dari request
+       local token = kong.request.get_header("Authorization")
+
+       -- Jika tidak ada token, balas dengan status 401
+       if not token then
+         return kong.response.exit(401, { message = "Missing Authorization header" })
+       end
+
+       -- Panggil API eksternal untuk validasi token
+       local http = require "resty.http"
+       local httpc = http.new()
+
+       local res, err = httpc:request_uri(conf.validation_url, {
+         method = "POST",
+         body = '{"token": "' .. token .. '"}',
+         headers = {
+           ["Content-Type"] = "application/json",
+         }
+       })
+
+       -- Jika gagal memanggil API, balas dengan status 500
+       if not res then
+         kong.log.err("Failed to request: ", err)
+         return kong.response.exit(500, { message = "Failed to validate token" })
+       end
+
+       -- Cek status validasi token dari API eksternal
+       if res.status ~= 200 then
+         return kong.response.exit(401, { message = "Invalid token" })
+       end
+
+       -- Jika validasi berhasil, lanjutkan request
+       kong.log.debug("Token is valid")
+    end
+
+    return TokenValidation
+  schema.lua: |
+    -- /usr/local/share/lua/5.1/kong/plugins/token-validation/schema.lua
+
+    local typedefs = require "kong.db.schema.typedefs"
+
+    return {
+      name = "token-validation",
+      fields = {
+        { config = {
+            type = "record",
+            fields = {
+              { validation_url = { type = "string", required = true }, }, -- URL untuk validasi token
+            },
+        }, },
+      },
+    }
+kind: ConfigMap
+metadata:
+  labels:
+    app: kong
+  name: kong-custom-plugin

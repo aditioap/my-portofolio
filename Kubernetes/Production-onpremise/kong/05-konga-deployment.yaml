@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: konga
+  namespace: kong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: konga
+  template:
+    metadata:
+      labels:
+        app: konga
+    spec:
+      imagePullSecrets:
+        - name: cred-sysadmin
+      containers:
+        - name: konga-migrate
+          image: git.mcf.co.id:5050/moofi/moofi-production-kube/konga:latest
+          command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              until npm run db:migrate; do
+                echo "Waiting for Konga database to be ready..."
+                sleep 5
+              done
+          env:
+            - name: DB_ADAPTER
+              value: postgres
+            - name: DB_HOST
+              value: kong-database.kong.svc.cluster.local
+            - name: DB_USER
+              #value: macf
+              valueFrom:
+                configMapKeyRef:
+                  key: KONG_PG_USER
+                  name: kong-db-config 
+            - name: DB_PASSWORD
+              #value: macfjayajaya
+              valueFrom:
+                configMapKeyRef:
+                  key: KONG_PG_PASSWORD
+                  name: kong-db-config 
+            - name: DB_NAME
+              #value: kong
+              valueFrom:
+                configMapKeyRef:
+                  key: KONG_PG_DATABASE
+                  name: kong-db-config 
+        - env:
+            - name: KONGA_BACKEND_URL
+              value: http://kong-proxy.kong.svc.cluster.local:8001
+            - name: DB_ADAPTER
+              value: postgres
+            - name: DB_HOST
+              value: kong-database.kong.svc.cluster.local
+            - name: DB_USER
+              #value: macf
+              valueFrom:
+                configMapKeyRef:
+                  key: KONG_PG_USER
+                  name: kong-db-config 
+            - name: DB_PASSWORD
+              #value: macfjayajaya
+              valueFrom:
+                configMapKeyRef:
+                  key: KONG_PG_PASSWORD
+                  name: kong-db-config 
+            - name: DB_DATABASE
+              #value: kong
+              valueFrom:
+                configMapKeyRef:
+                  key: KONG_PG_DATABASE
+                  name: kong-db-config 
+          image: git.mcf.co.id:5050/moofi/moofi-production-kube/konga:latest
+          name: konga
+          ports:
+            - containerPort: 1337
+              protocol: TCP
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "400m"

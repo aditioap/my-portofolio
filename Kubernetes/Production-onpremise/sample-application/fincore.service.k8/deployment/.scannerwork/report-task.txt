@@ -1,0 +1,6 @@
+projectKey=testing-fincore.backend
+serverUrl=http://172.16.95.24
+serverVersion=25.9.0.112764
+dashboardUrl=http://172.16.95.24/dashboard?id=testing-fincore.backend
+ceTaskId=113ed2f2-7bb9-4abb-8b89-8a387112715d
+ceTaskUrl=http://172.16.95.24/api/ce/task?id=113ed2f2-7bb9-4abb-8b89-8a387112715d

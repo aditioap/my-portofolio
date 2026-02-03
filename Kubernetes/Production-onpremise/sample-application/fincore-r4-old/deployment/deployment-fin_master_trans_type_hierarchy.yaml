@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: fin-master-trans-type-hierarchy-services
+    version: v1
+  name: fin-master-trans-type-hierarchy-services
+  #namespace: uat-mcf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fin-master-trans-type-hierarchy-services
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: fin-master-trans-type-hierarchy-services
+        version: v1
+    spec:
+      containers:
+        - env:
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  key: ASPNETCORE_ENVIRONMENT
+                  name: uat-config-mcf
+            - name: CONN_ACQUISITION
+              valueFrom:
+                configMapKeyRef:
+                  key: CONN_ACQUISITION
+                  name: uat-config-mcf
+            - name: CONN_MASTER
+              valueFrom:
+                configMapKeyRef:
+                  key: CONN_MASTER
+                  name: uat-config-mcf
+            - name: CONN_PAYMENT
+              valueFrom:
+                configMapKeyRef:
+                  key: CONN_PAYMENT
+                  name: uat-config-mcf
+            - name: CONN_TERMINATION
+              valueFrom:
+                configMapKeyRef:
+                  key: CONN_TERMINATION
+                  name: uat-config-mcf
+            - name: ASPNETCORE_HTTP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: ASPNETCORE_HTTP_PORT
+                  name: uat-config-mcf
+            - name: ASPNETCORE_URLS
+              valueFrom:
+                configMapKeyRef:
+                  key: ASPNETCORE_URLS
+                  name: uat-config-mcf
+            - name: COMPANY_ID_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  key: COMPANY_ID_ENVIRONMENT
+                  name: uat-config-mcf
+            - name: COMPANY_NAME_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  key: COMPANY_NAME_ENVIRONMENT
+                  name: uat-config-mcf
+            - name: JAEGER_EXPORT_LINK
+              valueFrom:
+                configMapKeyRef:
+                  key: JAEGER_EXPORT_LINK
+                  name: uat-config-mcf
+          image: git.mcf.co.id:5050/dev.bs/fincore.service/fin_master_trans_type_hierarchy:development-R4-v3
+          imagePullPolicy: IfNotPresent
+          name: fin-master-trans-type-hierarchy-services
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 250m
+              memory: 350Mi
+            requests:
+              cpu: 100m
+              memory: 250Mi
+      imagePullSecrets:
+        - name: cred-sysadmin

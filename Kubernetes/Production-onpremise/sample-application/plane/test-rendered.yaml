@@ -1,0 +1,903 @@
+---
+# Source: plane-ce/templates/service-account.yaml
+apiVersion: v1
+automountServiceAccountToken: true
+kind: ServiceAccount
+metadata:
+  namespace: plane-ce
+  name: plane-app-srv-account
+---
+# Source: plane-ce/templates/config-secrets/app-env.yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  namespace: plane-ce
+  name: plane-app-app-secrets
+stringData:
+  SECRET_KEY: "60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5"
+  LIVE_SERVER_SECRET_KEY: "htbqvBJAgpm9bzvf3r4urJer0ENReatceh"
+  REDIS_URL: "redis://plane-app-redis.plane-ce.svc.cluster.local:6379/"
+  DATABASE_URL: "postgresql://plane:plane@plane-app-pgdb.plane-ce.svc.cluster.local/plane"
+  AMQP_URL: "amqp://plane:plane@plane-app-rabbitmq.plane-ce.svc.cluster.local/"
+---
+# Source: plane-ce/templates/config-secrets/doc-store.yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  namespace: plane-ce
+  name: plane-app-doc-store-secrets
+stringData:
+  FILE_SIZE_LIMIT: "5242880"
+  AWS_S3_BUCKET_NAME: "uploads"
+  USE_MINIO: "1"
+  MINIO_ROOT_USER: "admin"
+  MINIO_ROOT_PASSWORD: "password"
+  AWS_ACCESS_KEY_ID: "admin"
+  AWS_SECRET_ACCESS_KEY: "password"
+  AWS_S3_ENDPOINT_URL: http://plane-app-minio:9000
+---
+# Source: plane-ce/templates/config-secrets/live-env.yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  namespace: plane-ce
+  name: plane-app-live-secrets
+stringData:
+  LIVE_SERVER_SECRET_KEY: "htbqvBJAgpm9bzvf3r4urJer0ENReatceh"
+  REDIS_URL: "redis://plane-app-redis.plane-ce.svc.cluster.local:6379/"
+---
+# Source: plane-ce/templates/config-secrets/pgdb.yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  namespace: plane-ce
+  name: plane-app-pgdb-secrets
+stringData:
+  POSTGRES_PASSWORD: "plane"
+  POSTGRES_DB: "plane"
+  POSTGRES_USER: "plane"
+---
+# Source: plane-ce/templates/config-secrets/rabbitmqdb.yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  namespace: plane-ce
+  name: plane-app-rabbitmq-secrets
+stringData:
+  RABBITMQ_DEFAULT_USER: "plane"
+  RABBITMQ_DEFAULT_PASS: "plane"
+---
+# Source: plane-ce/templates/config-secrets/app-env.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: plane-ce
+  name: plane-app-app-vars
+data:
+  SENTRY_DSN: ""
+  SENTRY_ENVIRONMENT: ""
+  DEBUG: "0"
+  DOCKERIZED: "1"
+  GUNICORN_WORKERS: "1"
+  MINIO_ENDPOINT_SSL: "0"
+  API_KEY_RATE_LIMIT: "60/minute"
+  WEB_URL: "http://plane.example.com"
+  CORS_ALLOWED_ORIGINS: "http://plane.example.com,https://plane.example.com"
+---
+# Source: plane-ce/templates/config-secrets/live-env.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: plane-ce
+  name: plane-app-live-vars
+data:
+  API_BASE_URL: "http://plane-app-api.plane-ce.svc.cluster.local:8000/"
+  LIVE_BASE_PATH: "/live"
+---
+# Source: plane-ce/templates/workloads/admin.deployment.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: plane-ce
+  name: plane-app-admin
+  labels:
+    app.name: plane-ce-plane-app-admin
+spec:
+  clusterIP: None
+  ports:
+  - name: admin-3000
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app.name: plane-ce-plane-app-admin
+---
+# Source: plane-ce/templates/workloads/api.deployment.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: plane-ce
+  name: plane-app-api
+  labels:
+    app.name: plane-ce-plane-app-api
+spec:
+  clusterIP: None
+  ports:
+  - name: api-8000
+    port: 8000
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app.name: plane-ce-plane-app-api
+---
+# Source: plane-ce/templates/workloads/live.deployment.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: plane-ce
+  name: plane-app-live
+  labels:
+    app.name: plane-ce-plane-app-live
+spec:
+  clusterIP: None
+  ports:
+  - name: live-3000
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app.name: plane-ce-plane-app-live
+---
+# Source: plane-ce/templates/workloads/minio.stateful.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: plane-ce
+  name: plane-app-minio
+  labels:
+    app.name: plane-ce-plane-app-minio
+spec:
+  clusterIP: None
+  ports:
+  - name: minio-api-9000
+    port: 9000
+    protocol: TCP
+    targetPort: 9000
+  - name: minio-console-9090
+    port: 9090
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    app.name: plane-ce-plane-app-minio
+---
+# Source: plane-ce/templates/workloads/postgres.stateful.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: plane-ce
+  name: plane-app-pgdb
+  labels:
+    app.name: plane-ce-plane-app-pgdb
+spec:
+  clusterIP: None
+  ports:
+  - name: pg-5432
+    port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    app.name: plane-ce-plane-app-pgdb
+---
+# Source: plane-ce/templates/workloads/rabbitmq.stateful.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: plane-ce
+  name: plane-app-rabbitmq
+  labels:
+    app.name: plane-ce-plane-app-rabbitmq
+spec:
+  clusterIP: None
+  ports:
+  - name: rabbitmq-5672
+    port: 5672
+    protocol: TCP
+    targetPort: 5672
+  - name: rabbitmq-mgmt-15672
+    port: 15672
+    protocol: TCP
+    targetPort: 15672
+  selector:
+    app.name: plane-ce-plane-app-rabbitmq
+---
+# Source: plane-ce/templates/workloads/redis.stateful.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: plane-ce
+  name: plane-app-redis
+  labels:
+    app.name: plane-ce-plane-app-redis
+spec:
+  clusterIP: None
+  ports:
+  - name: redis-6379
+    port: 6379
+    protocol: TCP
+    targetPort: 6379
+  selector:
+    app.name: plane-ce-plane-app-redis
+---
+# Source: plane-ce/templates/workloads/space.deployment.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: plane-ce
+  name: plane-app-space
+  labels:
+    app.name: plane-ce-plane-app-space
+spec:
+  clusterIP: None
+  ports:
+  - name: space-3000
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app.name: plane-ce-plane-app-space
+---
+# Source: plane-ce/templates/workloads/web.deployment.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: plane-ce
+  name: plane-app-web
+  labels:
+    app.name: plane-ce-plane-app-web
+spec:
+  clusterIP: None
+  ports:
+  - name: web-3000
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app.name: plane-ce-plane-app-web
+---
+# Source: plane-ce/templates/workloads/admin.deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: plane-ce
+  name: plane-app-admin-wl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.name: plane-ce-plane-app-admin
+  template:
+    metadata:
+      namespace: plane-ce
+      labels:
+        app.name: plane-ce-plane-app-admin
+      annotations:
+        timestamp: "2025-12-03 15:31:22.802853911 +0700 WIB m=+0.531362683"
+    spec:
+      containers:
+      - name: plane-app-admin
+        imagePullPolicy: Always
+        image: artifacts.plane.so/makeplane/plane-admin:v1.1.0
+        stdin: true
+        tty: true
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "50m"
+          limits:
+            memory: "1000Mi"
+            cpu: "500m"
+      serviceAccount: plane-app-srv-account
+      serviceAccountName: plane-app-srv-account
+---
+# Source: plane-ce/templates/workloads/api.deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: plane-ce
+  name: plane-app-api-wl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.name: plane-ce-plane-app-api
+  template:
+    metadata:
+      namespace: plane-ce
+      labels:
+        app.name: plane-ce-plane-app-api
+      annotations:
+        timestamp: "2025-12-03 15:31:22.802802087 +0700 WIB m=+0.531310867"
+    spec:
+      containers:
+      - name: plane-app-api
+        imagePullPolicy: Always
+        image: artifacts.plane.so/makeplane/plane-backend:v1.1.0
+        stdin: true
+        tty: true
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "50m"
+          limits:
+            memory: "1000Mi"
+            cpu: "500m"
+        command:
+          - ./bin/docker-entrypoint-api.sh
+        envFrom:
+          - configMapRef:
+              name: plane-app-app-vars
+              optional: false
+          - secretRef:
+              name: plane-app-app-secrets
+              optional: false
+          - secretRef:
+              name: plane-app-doc-store-secrets
+              optional: false
+        readinessProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /
+            port: 8000
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+      serviceAccount: plane-app-srv-account
+      serviceAccountName: plane-app-srv-account
+---
+# Source: plane-ce/templates/workloads/beat-worker.deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: plane-ce
+  name: plane-app-beat-worker-wl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.name: plane-ce-plane-app-beat-worker
+  template:
+    metadata:
+      namespace: plane-ce
+      labels:
+        app.name: plane-ce-plane-app-beat-worker
+      annotations:
+        timestamp: "2025-12-03 15:31:22.802748876 +0700 WIB m=+0.531257646"
+    spec:
+      containers:
+      - name: plane-app-beat-worker
+        imagePullPolicy: Always
+        image: artifacts.plane.so/makeplane/plane-backend:v1.1.0
+        stdin: true
+        tty: true
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "50m"
+          limits:
+            memory: "1000Mi"
+            cpu: "500m"
+        command:
+          - ./bin/docker-entrypoint-beat.sh
+        envFrom:
+          - configMapRef:
+              name: plane-app-app-vars
+              optional: false
+          - secretRef:
+                name: plane-app-app-secrets
+                optional: false
+          - secretRef:
+              name: plane-app-doc-store-secrets
+              optional: false
+      serviceAccount: plane-app-srv-account
+      serviceAccountName: plane-app-srv-account
+---
+# Source: plane-ce/templates/workloads/live.deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: plane-ce
+  name: plane-app-live-wl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.name: plane-ce-plane-app-live
+  template:
+    metadata:
+      namespace: plane-ce
+      labels:
+        app.name: plane-ce-plane-app-live
+      annotations:
+        timestamp: "2025-12-03 15:31:22.802707635 +0700 WIB m=+0.531216406"
+    spec:
+      containers:
+      - name: plane-app-live
+        imagePullPolicy: Always
+        image: artifacts.plane.so/makeplane/plane-live:v1.1.0
+        stdin: true
+        tty: true
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "50m"
+          limits:
+            memory: "1000Mi"
+            cpu: "500m"
+        envFrom:
+          - configMapRef:
+              name: plane-app-live-vars
+              optional: false
+          - secretRef:
+              name: plane-app-live-secrets
+              optional: false
+      serviceAccount: plane-app-srv-account
+      serviceAccountName: plane-app-srv-account
+---
+# Source: plane-ce/templates/workloads/space.deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: plane-ce
+  name: plane-app-space-wl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.name: plane-ce-plane-app-space
+  template:
+    metadata:
+      namespace: plane-ce
+      labels:
+        app.name: plane-ce-plane-app-space
+      annotations:
+        timestamp: "2025-12-03 15:31:22.802461696 +0700 WIB m=+0.530970475"
+    spec:
+      containers:
+      - name: plane-app-space
+        imagePullPolicy: Always
+        image: artifacts.plane.so/makeplane/plane-space:v1.1.0
+        stdin: true
+        tty: true
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "50m"
+          limits:
+            memory: "1000Mi"
+            cpu: "500m"
+      serviceAccount: plane-app-srv-account
+      serviceAccountName: plane-app-srv-account
+---
+# Source: plane-ce/templates/workloads/web.deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: plane-ce
+  name: plane-app-web-wl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.name: plane-ce-plane-app-web
+  template:
+    metadata:
+      namespace: plane-ce
+      labels:
+        app.name: plane-ce-plane-app-web
+      annotations:
+        timestamp: "2025-12-03 15:31:22.802412397 +0700 WIB m=+0.530921185"
+    spec:
+      containers:
+      - name: plane-app-web
+        imagePullPolicy: Always
+        image: artifacts.plane.so/makeplane/plane-frontend:v1.1.0
+        stdin: true
+        tty: true
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "50m"
+          limits:
+            memory: "1000Mi"
+            cpu: "500m"
+      serviceAccount: plane-app-srv-account
+      serviceAccountName: plane-app-srv-account
+---
+# Source: plane-ce/templates/workloads/worker.deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: plane-ce
+  name: plane-app-worker-wl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.name: plane-ce-plane-app-worker
+  template:
+    metadata:
+      namespace: plane-ce
+      labels:
+        app.name: plane-ce-plane-app-worker
+      annotations:
+        timestamp: "2025-12-03 15:31:22.802319864 +0700 WIB m=+0.530828651"
+    spec:
+      containers:
+      - name: plane-app-worker
+        imagePullPolicy: Always
+        image: artifacts.plane.so/makeplane/plane-backend:v1.1.0
+        stdin: true
+        tty: true
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "50m"
+          limits:
+            memory: "1000Mi"
+            cpu: "500m"
+        command:
+          - ./bin/docker-entrypoint-worker.sh
+        envFrom:
+          - configMapRef:
+              name: plane-app-app-vars
+              optional: false
+          - secretRef:
+              name: plane-app-app-secrets
+              optional: false
+          - secretRef:
+              name: plane-app-doc-store-secrets
+              optional: false
+      serviceAccount: plane-app-srv-account
+      serviceAccountName: plane-app-srv-account
+---
+# Source: plane-ce/templates/workloads/minio.stateful.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: plane-ce
+  name: plane-app-minio-wl
+spec:
+  selector:
+    matchLabels:
+      app.name: plane-ce-plane-app-minio
+  serviceName:  plane-app-minio
+  template:
+    metadata:
+      labels:
+        app.name: plane-ce-plane-app-minio
+    spec:
+      containers:
+      - image: minio/minio:latest
+        imagePullPolicy: IfNotPresent
+        name: plane-app-minio
+        stdin: true
+        tty: true
+        # command:
+        args:
+          - server
+          - /data
+          - --console-address 
+          - :9090
+        envFrom:
+          - secretRef:
+              name: plane-app-doc-store-secrets
+              optional: false
+        volumeMounts:
+        - mountPath: /data
+          name: pvc-plane-app-minio-vol
+          subPath: ''
+      serviceAccount: plane-app-srv-account
+      serviceAccountName: plane-app-srv-account
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      creationTimestamp: null
+      namespace: plane-ce
+      name: pvc-plane-app-minio-vol
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: "1Gi"
+      storageClassName: 
+      volumeMode: Filesystem
+---
+# Source: plane-ce/templates/workloads/postgres.stateful.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: plane-ce
+  name: plane-app-pgdb-wl
+spec:
+  selector:
+    matchLabels:
+      app.name: plane-ce-plane-app-pgdb
+  serviceName:  plane-app-pgdb
+  template:
+    metadata:
+      labels:
+        app.name: plane-ce-plane-app-pgdb
+    spec:
+      containers:
+      - image: postgres:15.7-alpine
+        imagePullPolicy: IfNotPresent
+        name: plane-app-pgdb
+        stdin: true
+        tty: true
+        env:
+          - name: PGDATA
+            value: /var/lib/postgresql/data/plane
+        envFrom:
+          - secretRef:
+              name: plane-app-pgdb-secrets
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: pvc-plane-app-pgdb-vol
+          subPath: ''
+      serviceAccount: plane-app-srv-account
+      serviceAccountName: plane-app-srv-account
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      creationTimestamp: null
+      namespace: plane-ce
+      name: pvc-plane-app-pgdb-vol
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: "1Gi"
+      storageClassName: 
+      volumeMode: Filesystem
+---
+# Source: plane-ce/templates/workloads/rabbitmq.stateful.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: plane-ce
+  name: plane-app-rabbitmq-wl
+spec:
+  selector:
+    matchLabels:
+      app.name: plane-ce-plane-app-rabbitmq
+  serviceName:  plane-app-rabbitmq
+  template:
+    metadata:
+      labels:
+        app.name: plane-ce-plane-app-rabbitmq
+    spec:
+      containers:
+      - image: rabbitmq:3.13.6-management-alpine
+        imagePullPolicy: "IfNotPresent"
+        name: plane-app-rabbitmq
+        stdin: true
+        tty: true
+        envFrom:
+          - secretRef:
+              name: plane-app-rabbitmq-secrets
+              optional: false 
+        volumeMounts:
+        - mountPath: /var/lib/rabbitmq
+          name: pvc-plane-app-rabbitmq-vol
+          subPath: ''
+      serviceAccount: plane-app-srv-account
+      serviceAccountName: plane-app-srv-account
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      creationTimestamp: null
+      namespace: plane-ce
+      name: pvc-plane-app-rabbitmq-vol
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: "100Mi"
+      storageClassName: 
+      volumeMode: Filesystem
+---
+# Source: plane-ce/templates/workloads/redis.stateful.yaml
+# REDIS WORKLOAD
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: plane-ce
+  name: plane-app-redis-wl
+spec:
+  selector:
+    matchLabels:
+      app.name: plane-ce-plane-app-redis
+  serviceName:  plane-app-redis
+  template:
+    metadata:
+      labels:
+        app.name: plane-ce-plane-app-redis
+    spec:
+      containers:
+      - image: valkey/valkey:7.2.11-alpine
+        imagePullPolicy: IfNotPresent
+        name: plane-app-redis
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /data
+          name: pvc-plane-app-redis-vol
+          subPath: ''
+      serviceAccount: plane-app-srv-account
+      serviceAccountName: plane-app-srv-account
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      creationTimestamp: null
+      namespace: plane-ce
+      name: pvc-plane-app-redis-vol
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: "100Mi"
+      storageClassName: 
+      volumeMode: Filesystem
+---
+# Source: plane-ce/templates/workloads/migrator.job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: plane-ce
+  name: plane-app-api-migrate-1
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app.name: plane-ce-plane-app-api-migrate
+      annotations:
+        timestamp: "2025-12-03 15:31:22.802668756 +0700 WIB m=+0.531177552"
+    spec:
+      containers:
+      - name: plane-app-api-migrate
+        image: artifacts.plane.so/makeplane/plane-backend:v1.1.0
+        command: 
+          - ./bin/docker-entrypoint-migrator.sh
+        imagePullPolicy: Always
+        envFrom:
+          - configMapRef:
+              name: plane-app-app-vars
+              optional: false
+          - secretRef:
+              name: plane-app-app-secrets
+              optional: false
+          - secretRef:
+              name:  plane-app-doc-store-secrets
+              optional: false
+      restartPolicy: OnFailure
+      serviceAccount: plane-app-srv-account
+      serviceAccountName: plane-app-srv-account
+---
+# Source: plane-ce/templates/workloads/minio.stateful.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: plane-ce
+  name: plane-app-minio-bucket-1
+spec:
+  backoffLimit: 6
+  completionMode: NonIndexed
+  template:
+    metadata:
+      namespace: plane-ce
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: init
+          image: busybox
+          command: ['sh', '-c', "until nslookup  plane-app-minio.plane-ce.svc.cluster.local; do echo waiting for  plane-app-minio; sleep 2; done"]
+      containers:
+        - command:
+            - /bin/sh
+          args:
+            - '-c'
+            - >-
+              /usr/bin/mc config host add plane-app-minio
+              http://plane-app-minio.plane-ce.svc.cluster.local:9000 "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY"; 
+              /usr/bin/mc mb plane-app-minio/$AWS_S3_BUCKET_NAME; 
+              /usr/bin/mc anonymous set download plane-app-minio/$AWS_S3_BUCKET_NAME; exit 0;
+          envFrom:
+            - secretRef:
+                name: plane-app-doc-store-secrets
+                optional: false
+          image: minio/mc:latest
+          imagePullPolicy: IfNotPresent
+          name: plane-app-minio-bucket
+      serviceAccount: plane-app-srv-account
+      serviceAccountName: plane-app-srv-account
+      terminationGracePeriodSeconds: 120
+---
+# Source: plane-ce/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: plane-ce
+  name: plane-app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "5m"
+spec:
+  ingressClassName: "nginx"
+  rules:
+    - host: plane.example.com
+      http:
+        paths:
+          - backend:
+              service:
+                port:
+                  number: 3000
+                name: plane-app-web
+            path: /
+            pathType: Prefix
+          - backend:
+              service:
+                port:
+                  number: 8000
+                name: plane-app-api
+            path: /api
+            pathType: Prefix
+          - backend:
+              service:
+                port:
+                  number: 8000
+                name: plane-app-api
+            path: /auth
+            pathType: Prefix
+          - backend:
+              service:
+                port:
+                  number: 3000
+                name: plane-app-live
+            path: /live/
+            pathType: Prefix
+          - backend:
+              service:
+                port:
+                  number: 3000
+                name: plane-app-space
+            path: /spaces
+            pathType: Prefix
+          - backend:
+              service:
+                port:
+                  number: 3000
+                name: plane-app-admin
+            path: /god-mode
+            pathType: Prefix
+          - backend:
+              service:
+                port:
+                  number: 9000
+                name: plane-app-minio
+            path: /uploads
+            pathType: Prefix

@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: fin-vertel-services
+    version: v1
+  name: fin-vertel-services
+  namespace: uat-mcf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fin-vertel-services
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: fin-vertel-services
+        version: v1
+    spec:
+      containers:
+        - env:
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  key: ASPNETCORE_ENVIRONMENT
+                  name: uat-mcf-config
+            - name: CONN_ACQUISITION
+              valueFrom:
+                configMapKeyRef:
+                  key: CONN_ACQUISITION
+                  name: uat-mcf-config
+            - name: CONN_MASTER
+              valueFrom:
+                configMapKeyRef:
+                  key: CONN_MASTER
+                  name: uat-mcf-config
+            - name: CONN_PAYMENT
+              valueFrom:
+                configMapKeyRef:
+                  key: CONN_PAYMENT
+                  name: uat-mcf-config
+            - name: CONN_TERMINATION
+              valueFrom:
+                configMapKeyRef:
+                  key: CONN_TERMINATION
+                  name: uat-mcf-config
+            - name: ASPNETCORE_HTTP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: ASPNETCORE_HTTP_PORT
+                  name: uat-mcf-config
+            - name: ASPNETCORE_URLS
+              valueFrom:
+                configMapKeyRef:
+                  key: ASPNETCORE_URLS
+                  name: uat-mcf-config
+            - name: COMPANY_ID_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  key: COMPANY_ID_ENVIRONMENT
+                  name: uat-mcf-config
+            - name: COMPANY_NAME_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  key: COMPANY_NAME_ENVIRONMENT
+                  name: uat-mcf-config
+            - name: JAEGER_EXPORT_LINK
+              valueFrom:
+                configMapKeyRef:
+                  key: JAEGER_EXPORT_LINK
+                  name: uat-mcf-config
+          image: >-
+            git.mcf.co.id:5050/dev.bs/fincore.service/fin_vertel:development-R2-v126
+          imagePullPolicy: IfNotPresent
+          name: fin-vertel-services
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 250m
+              memory: 350Mi
+            requests:
+              cpu: 100m
+              memory: 250Mi
+      imagePullSecrets:
+        - name: cred-sysadmin

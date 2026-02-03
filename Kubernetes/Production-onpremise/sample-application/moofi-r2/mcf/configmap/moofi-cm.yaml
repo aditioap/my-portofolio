@@ -1,0 +1,62 @@
+apiVersion: v1
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+# Using FQDN
+#  C_MOBILE: uMvTxS/Jq1Tn1yTjQ7Dbid/bvTZ4O3eWZfZnPc7UvackOEV9sXJqEb5lTZggRONmktrs4LETnF6ayK5RDy/we7IPli2pUJwwwZGbCwe834kpTBAYBgQBZ3XfuEsGY2Z9Up8r0wMuJqwh6o/2jtIweuar4QKtsQlPhBkNqIVaFdkDY3qJ/RJDY0rVnibmXGpd3678HswgmZQvPNQRmnuvbfQPCJpMK1l3+L2QYwFFiGmdhUhKybvyhmWf1yv9FGo/zkEwSwEQNgV9rMORoIp/tA==
+#  CONN_ACQUISITION: uMvTxS/Jq1QF3lxpGxMqKb50Dfjq5JVZ+VquyYsBF49Vc9YYfm1QPuIWvVMTw7nlNhhz6454i/Cq/AsPZsWPdicKZTq5uOfsWOtR7JU+cqcZPzxPttafhXkwaPAa4sIZKX7ckUIwKz4dQ/uX2oHh3Gyop+SV4uZ5nL0tICVbQ2Pycr91TKl7OmKou6BBKM4cXfZjYQlvoB+xNQUVAWsmGO9g2eFTtyXgk/Yl1LbukOqA8o0cpOILXeiKSQxYaEFGeEE1tmYZpI0qklADL6gm6+6thsDBhTxU
+#  CONN_EPMAFDB: uMvTxS/Jq1Tn1yTjQ7Dbid/bvTZ4O3eWZfZnPc7UvaeEGlcFNGx+Di9ySqUMVj0kVE/pNH7tINI2FCVO9B2JFnWT5SjRf0vnU4ryPE2B4AK0lH5+ehh77vkfB8gQIAHx3mZGH4fcACTrZL/kl8E6cRGTJo5hQB8/6IDcc42TUhq9oXYYY6K3JD0PEhXOR83I7pHgiKNB57qnXenhErmeBVhfcCXfRktV9vtrTKpb/u1uVNdUPtZvbOGGdW1UzJ/bZJ0XRn3qgl+12iMqz3Q1wA==
+#  CONN_EPMCFDB: uMvTxS/Jq1Tn1yTjQ7Dbid/bvTZ4O3eWZfZnPc7UvaeEGlcFNGx+DsXpbeygFEtaD600S7otnAQKwk6eYwPb5ado/omPR5yFFQa3o6sFhiC/gzMQ1ZVLVrLAOG+G0blmGI1sUH6VCd90pnM4lETepkrMkxC08xhJxa0uUqUSk3yYwS3GDbpSWhKlukd405MDKulV9ENvORM30GrOb4Hqj1479W/4Uh7y+zX5leJAQ0kFJU1+0NTsf5xVuQ7/165sqlqp7FTxWlNkHueVPZ4uFQ==
+#  CONN_MACFDB: uMvTxS/Jq1Tn1yTjQ7Dbid/bvTZ4O3eWZfZnPc7UvackOEV9sXJqEbVMOB2y/K9E59AtdW6jeZ7nSWrmlVnRxx+ul940mFwyFVOX0+HfrZr+lICkhz+BiUPe4k0d2MnPa42W8/tzen3YIv+ygDvvIOLLxgiIGKa8Cpt79yIN08twjsnUYDP/vlo1WhX71CWc7P+B+FWWPt9ly3UVjRsxR53D3+KV/JpYXltBRfLAasi2ZhPG/qWV3MpliJ3fbV/3uC+gokBuwVSRP5c5P3KFmcmF7+h3EPtn
+#  CONN_MASTER: uMvTxS/Jq1QF3lxpGxMqKb50Dfjq5JVZ+VquyYsBF49Vc9YYfm1QPoAGgufVw+Sieu5HJKohsgrrnq7bqNzXmO4gZKD+lbD7/WGYoFFcHCbClS4scQ4cW5m5D2J3tJdVTfzDBgmQmcOfZNvLyJ/M1BK/nS6yjKxjK8qdG3MOJUvrVmeuPsfVth4lakP3RPKfq8ZEcuF7fX4+Ye28LQY8ePs3HLlhhyHyMgu92lpUL/C3WWAEN1OZETVs6XvSuedDEJ2rnU78wD2g4wxsGX4eb4VPsFJjNQaT
+#  CONN_MONGO_DUKCAPIL: 7iOd63L4kciN6Q6hCDOPfCyNghWoIDY7TMnbEiHXYXk1B6MqmrTNDUC4scPzPvj8gvrfQu//no6F87bbc/pTOkGONvoCoHVobwp8wABvRudG16ISjqL0e5UEOCNKPAQ+h2U9YArRi6U=
+#  DOM_LDAP: http://macf-rpld.macf.co.id:98
+#  DOM_PEFINDO: http://uat-finmcf:1111/api/v1/external/super?flag1=I3Acvg+m4J7Xszu5+A7CUA==&flag2=ONeGAj3zgmKqFuISM0Ihobv4LyLgo6iq&flag3=ZzSQPsC7dvZ/CHei5BKeoA/SB90E53bY+/sbOjJjRPs=
+#  GOCONN_EP: sqlserver://it_dev:K15Fx9NYk1DKXm8tdFWq@macf-dbuat:1433?database=EPMCF
+#  GOCONN_MOB: sqlserver://it_dev:K15Fx9NYk1DKXm8tdFWq@macf-dbuat:1433?database=Mobile
+
+# Using IP
+  C_MOBILE: uMvTxS/Jq1QIOYdYzPuhY6hC2n9sQAbFx1TyWOV0qkq6OxocWBFZJZXHI+QQJ62FbwPhp6FxylkLZ+dSFhGfs+fLQJzX5/DmtfKgWjzpegeBlnv/zZYTGD5mVjBHpx8CdNkouXnFm5X7dPGbLeF5tUCGSRoXqnTmO8dIKQydnVYw8nR25ogqZQUTGumKjJmuhnXlNzs0sWorjQgz/ZTc43rz5H+zCiUi9j7aeMmv8rWeNEI1XjTvjY/7+CagKTCgiWymlbCZIaAkGieTzZcT/oSXuQ8UyapW
+  C_Mongo: 7iOd63L4kciN6Q6hCDOPfCyNghWoIDY7TMnbEiHXYXk1B6MqmrTNDUC4scPzPvj8gvrfQu//no6F87bbc/pTOkGONvoCoHVobwp8wABvRudG16ISjqL0e6nZSNCYXIAEmOeu0fv9TNw=
+  COMPANY_NAME_ALIAS: mcf
+  CONN_ACQUISITION: uMvTxS/Jq1QIOYdYzPuhY6hC2n9sQAbFx1TyWOV0qkq6OxocWBFZJQ7Ox4zEPQn4K1VywnrwpS/W0bkNT8MlLfZcki8v0thAWmpdjlAK4RLkKCSIucV8j8CCoQYzlxhAJKjt6AuiR3dIJxdKuEuY5AX3gsvlyziomejUSHo+QFLSINDYSBt1qHS0zbxobWNVuFG3re7UbaLDUuP1mocnxG6cpiHCbVMn+A9Y6dAs93dsHuXcUfi8WxuHqN/tv76dQATchYiGZQsZh1Nog4UfQtzQaHxqfM41
+  CONN_EPMAFDB: uMvTxS/Jq1QIOYdYzPuhY6hC2n9sQAbFx1TyWOV0qkq6OxocWBFZJUiVLh3jwxaCH/06Ag+5Tr0FUfSSbzw9Ga7gSyjzmw8cZqSaXby9Q1xyBiI3PXrq/fRHTohLrkEpQMbhwNs4Kte32dFjQWYaY5fM+QDzblUk8wjJ4el2bJvxmHr7+gsd3uH7PQwEZX+8qFgxmfql7/Ve4//h+U2WzYn+WKvCPdJ/1BcijGO9WnqJt6nDrYQ8PFlKwi5LHnnNz+5l3H0d24Aoc0DJvNhxJA==
+  CONN_EPMCFDB: uMvTxS/Jq1QIOYdYzPuhY6hC2n9sQAbFx1TyWOV0qkq6OxocWBFZJYCPKgRz6uvk+UozQqc73cKtc7dFZ3/agdLfL4x/mzNLsveSTxaK4XSVXS0CioSp9N7Z74eayymn8GSM9qteLxzOuck+3V74lu84fIcG3DXrhlwMB5/wLDNsahaKs2M+yZxHE7blmOZT2hu51ao3BeZ++UaFOCgYia/iOE8K8eXIZdKS7s4MCmnmSKb2mNzp+age0NOUU/j9LDzTfRiQ6KTfUEvV18RNGg==
+  CONN_MACFDB: uMvTxS/Jq1QIOYdYzPuhY6hC2n9sQAbFx1TyWOV0qkq6OxocWBFZJVi76flMC/6ZyJ8wpx7zK+wIDwvK08W7pldEM91RRO+YAA4MK5fo8twbJqTZcnFC/QDjU3jBjdiSR/FPBieGgXfdTRw3KKtPSyLme10L/LkG5drRyyGkorKK8FX1MC4t0JaoQJ4AfTGJN4YyOCyQSPJcu6dYU7e25OcBXihtE1CAm0rfeJX+1HE1YaYh9Ep+llWjSmnE/FbuN/fnSw4qklPHOjT/6EPxkcMEfzNllKxj
+  CONN_MASTER: uMvTxS/Jq1QIOYdYzPuhY6hC2n9sQAbFx1TyWOV0qkq6OxocWBFZJchZa18+2uyYrJUUuExP1k4wafjrWzzHLB8lfWZVe88Utdm0ifPWT2cChwy3OFjQkOstAHlMgQlRtKyrN3Md8aGFqOiqdOYL9oY1av2+VoyxS+TCX07Rn+FmJVRG0ctdOa91UfqBVDnfe8bcatJGzYjIdofoIIFPMV9cJzDqKru8MydiFW9JTBtE4ueRlu5f8yHaTiK4H6yPq3FEZIHfFe0yH2kgWti0mvO8HLp/oyxm
+  CONN_MONGO_DUKCAPIL: 7iOd63L4kciN6Q6hCDOPfCyNghWoIDY7TMnbEiHXYXk1B6MqmrTNDUC4scPzPvj8gvrfQu//no6F87bbc/pTOkGONvoCoHVobwp8wABvRudG16ISjqL0e5UEOCNKPAQ+h2U9YArRi6U=
+  CONN_MONGO_MASTER: 7iOd63L4kciN6Q6hCDOPfCyNghWoIDY7TMnbEiHXYXk1B6MqmrTNDUC4scPzPvj8gvrfQu//no6F87bbc/pTOkGONvoCoHVobwp8wABvRudG16ISjqL0e6nZSNCYXIAEmOeu0fv9TNw=
+  D_Mongo: d8pMG0t+ga8Y6GyhUEVXag==
+  DB_MONGO_DUKCAPIL: OBFnql261pmCkP5jFh6DwQ==
+  DB_MONGO_MASTER: d8pMG0t+ga8Y6GyhUEVXag==
+  DOM_BANK_ACCOUNT: https://kirimdoku.com/v2/api/cashin/inquiry
+  DOM_DUKCAPIL: https://dukcapil-uat.mcf.co.id:6630
+  DOM_FCL_RESULT: http://fcl-result-services.uat-moofi-mcf.svc.cluster.local:5100/api/v1/services/fclresult/processfclresult
+  DOM_LDAP: http://172.16.91.62:98
+  DOM_MINIO: http://minio-services.uat-moofi-mcf.svc.cluster.local:5095
+  DOM_OCR: http://ocr-app-service.uat-moofi-mcf.svc.cluster.local:3637/v1/ocrFCL/
+  DOM_PEFINDO: http://172.16.96.85:1111/api/v1/external/super?flag1=I3Acvg+m4J7Xszu5+A7CUA==&flag2=ONeGAj3zgmKqFuISM0Ihobv4LyLgo6iq&flag3=ZzSQPsC7dvZ/CHei5BKeoA/SB90E53bY+/sbOjJjRPs=
+  DOM_SIMILARITY_WORD: http://similarity-services.uat-moofi-mcf.svc.cluster.local:5099/similarityword
+  DOM_SIMILIARITY: http://similarity-services.uat-moofi-mcf.svc.cluster.local:5099/similarity
+  DOM_TEMPO: http://172.16.91.216:4317
+  DOM_UPLOAD_MINIO: http://minio-services.uat-moofi-mcf.svc.cluster.local:5095/api/Files/Upload
+  DOM_VERIFACE: http://veriface-services.uat-moofi-mcf.svc.cluster.local:5115
+  GOCONN_EP: sqlserver://it_dev:K15Fx9NYk1DKXm8tdFWq@172.16.96.38:1433?database=EPMCF
+  GOCONN_MOB: sqlserver://it_dev:K15Fx9NYk1DKXm8tdFWq@172.16.96.38:1433?database=Mobile
+  HOSTNAME_RABITMQ: rabbitmq-prod.uat-moofi-mcf.svc.cluster.local
+  JWT_HOUR: M
+  JWT_SECRET_KEY: Ternak_Lele_Bang_Jali_Punya_Beragam_Ternak_Lele
+  JWT_TIME: "5"
+  MINIO_ACCESS_KEY: LxVE7aWbYxYIUpEosrHP
+  MINIO_SECRET_KEY: JeP62JlOA5O9fpNDwKtPjWnU41OE9BzGa6cyWoN8
+  MONGO_URI: mongodb://usrapp:Usrapp%402024@192.168.4.10:27017
+  PASSWORD_RABITMQ: wR0durqU2eYvNWONm/CTVQ==
+  PORT_RABITMQ: "5672"
+  QUEUES_RABITMQ: backGroundProcess3
+  USERNAME_RABITMQ: mgdgpVoOM/jv1RYaCy6RMQ==
+  SPRING_DATASOURCE_URL: "jdbc:sqlserver://macf-dbuat:1433;database=mobile;encrypt=true;trustServerCertificate=true;loginTimeout=30;"
+  SPRING_DATASOURCE_USERNAME: it_dev
+  SPRING_DATASOURCE_PASSWORD: K15Fx9NYk1DKXm8tdFWq
+  SPRING_DEVTOOL_RESTART_ENABLED: "true"
+kind: ConfigMap
+metadata:
+  name: moofi-cm

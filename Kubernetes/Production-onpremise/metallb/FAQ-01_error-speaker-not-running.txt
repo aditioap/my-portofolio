@@ -1,0 +1,61 @@
+## Contoh error ##
+Events:
+  Type     Reason                  Age                  From               Message
+  ----     ------                  ----                 ----               -------
+  Normal   Scheduled               4m4s                 default-scheduler  Successfully assigned metallb-system/controller-86b6b7d79-6h9gf to k8-prd-worker01
+  Warning  FailedCreatePodSandBox  43s (x5 over 3m35s)  kubelet            Failed to create pod sandbox: rpc error: code = DeadlineExceeded desc = failed to get sandbox image "registry.k8s.io/pause:3.8": failed to pull image "registry.k8s.io/pause:3.8": failed to pull and unpack image "registry.k8s.io/pause:3.8": failed to resolve reference "registry.k8s.io/pause:3.8": failed to do request: Head "https://registry.k8s.io/v2/pause/manifests/3.8": dial tcp 34.96.108.209:443: i/o timeout
+  Warning  FailedCreatePodSandBox  30s                  kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = failed to setup network for sandbox "137de676f256d48cf65c07bbdd09d0ba95d094c15b6bbb435d0aa69c7ef3a1a6": plugin type="calico" failed (add): stat /var/lib/calico/nodename: no such file or directory: check that the calico/node container is running and has mounted /var/lib/calico/
+  Warning  FailedCreatePodSandBox  29s                  kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = failed to setup network for sandbox "b55ae3aefe35ad48a446cfe4c096b30a9383af19c0a195ac6ff5ac3dd320b38f": plugin type="calico" failed (add): stat /var/lib/calico/nodename: no such file or directory: check that the calico/node container is running and has mounted /var/lib/calico/
+  Warning  FailedCreatePodSandBox  28s                  kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = failed to setup network for sandbox "6b6b896039678a2f794adc91db992607e0b1700f4cb5ccb187c806c304f05f54": plugin type="calico" failed (add): stat /var/lib/calico/nodename: no such file or directory: check that the calico/node container is running and has mounted /var/lib/calico/
+  Warning  FailedCreatePodSandBox  27s                  kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = failed to setup network for sandbox "8b0ec21611f322720bf50842cbb191ebd9001300a6bf2c65b02754ae60fc068c": plugin type="calico" failed (add): stat /var/lib/calico/nodename: no such file or directory: check that the calico/node container is running and has mounted /var/lib/calico/
+  Warning  FailedCreatePodSandBox  26s                  kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = failed to setup network for sandbox "bf5a3295ab473ac7fb1e3a18bbdd9f7b7f830d84e91e678f5d57a4a9554bf50b": plugin type="calico" failed (add): stat /var/lib/calico/nodename: no such file or directory: check that the calico/node container is running and has mounted /var/lib/calico/
+  Warning  FailedCreatePodSandBox  25s                  kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = failed to setup network for sandbox "deb0cfce51121da35d99b224d453f5efae6fb514009301d4eb5fe2f97890582c": plugin type="calico" failed (add): stat /var/lib/calico/nodename: no such file or directory: check that the calico/node container is running and has mounted /var/lib/calico/
+  Warning  FailedCreatePodSandBox  24s                  kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = failed to setup network for sandbox "2e18d514176f12a66b8da82791113da8423dd70f5463d9d20cb284ca575c79db": plugin type="calico" failed (add): stat /var/lib/calico/nodename: no such file or directory: check that the calico/node container is running and has mounted /var/lib/calico/
+  Warning  FailedCreatePodSandBox  23s                  kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = failed to setup network for sandbox "58b410188d385bc25294e44ae4a3f0d9614736a7e42dcc5364ba4bd972010a58": plugin type="calico" failed (add): stat /var/lib/calico/nodename: no such file or directory: check that the calico/node container is running and has mounted /var/lib/calico/
+  Warning  FailedCreatePodSandBox  11s (x12 over 22s)   kubelet            (combined from similar events): Failed to create pod sandbox: rpc error: code = Unknown desc = failed to setup network for sandbox "aef2f0a885fc72b8680f133f0293abed7ce797937f3ac55291029ad1b4816f44": plugin type="calico" failed (add): stat /var/lib/calico/nodename: no such file or directory: check that the calico/node container is running and has mounted /var/lib/calico/
+  Normal   SandboxChanged          5s (x25 over 30s)    kubelet            Pod sandbox changed, it will be killed and re-created.
+
+
+## Lakuin Step ini di setiap node cluster ##
+root@k8-prd-master01:/home/usradmsvr# ctr image pull registry.aliyuncs.com/google_containers/pause:3.8
+registry.aliyuncs.com/google_containers/pause:3.8:                                resolved       |++++++++++++++++++++++++++++++++++++++|
+index-sha256:9001185023633d17a2f98ff69b6ff2615b8ea02a825adffa40422f51dfdcde9d:    done           |++++++++++++++++++++++++++++++++++++++|
+manifest-sha256:f5944f2d1daf66463768a1503d0c8c5e8dde7c1674d3f85abc70cef9c7e32e95: done           |++++++++++++++++++++++++++++++++++++++|
+layer-sha256:9457426d68990df190301d2e20b8450c4f67d7559bdb7ded6c40d41ced6731f7:    done           |++++++++++++++++++++++++++++++++++++++|
+config-sha256:4873874c08efc72e9729683a83ffbb7502ee729e9a5ac097723806ea7fa13517:   done           |++++++++++++++++++++++++++++++++++++++|
+elapsed: 2.2 s                                                                    total:   0.0 B (0.0 B/s)
+unpacking linux/amd64 sha256:9001185023633d17a2f98ff69b6ff2615b8ea02a825adffa40422f51dfdcde9d...
+done: 45.598907ms
+root@k8-prd-master01:/home/usradmsvr# ctr image tag registry.aliyuncs.com/google_containers/pause:3.8 registry.k8s.io/pause:3.8
+
+## Delete pod dari deployment di node master(control-plane) kemudian cek statusnya lagi ##
+root@k8-prd-master01:/home/usradmsvr# kubectl delete pod -n metallb-system -l app=metallb
+pod "controller-86b6b7d79-6h9gf" deleted
+pod "speaker-9mbnj" deleted
+pod "speaker-rg5td" deleted
+pod "speaker-wcbw2" deleted
+root@k8-prd-master01:/home/usradmsvr# ls^C
+root@k8-prd-master01:/home/usradmsvr#
+root@k8-prd-master01:/home/usradmsvr#
+root@k8-prd-master01:/home/usradmsvr#
+root@k8-prd-master01:/home/usradmsvr# kubectl -n metallb-system get pod
+NAME                         READY   STATUS    RESTARTS   AGE
+controller-86b6b7d79-4sl4v   1/1     Running   0          16s
+speaker-8rkll                1/1     Running   0          15s
+speaker-vrmjp                1/1     Running   0          16s
+speaker-xc47h                1/1     Running   0          15s
+root@k8-prd-master01:/home/usradmsvr# kubectl -n metallb-system get pod
+NAME                         READY   STATUS    RESTARTS   AGE
+controller-86b6b7d79-4sl4v   1/1     Running   0          17s
+speaker-8rkll                1/1     Running   0          16s
+speaker-vrmjp                1/1     Running   0          17s
+speaker-xc47h                1/1     Running   0          16s
+root@k8-prd-master01:/home/usradmsvr# kubectl -n metallb-system get deployment
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+controller   1/1     1            1           8m1s
+root@k8-prd-master01:/home/usradmsvr#
+root@k8-prd-master01:/home/usradmsvr#
+root@k8-prd-master01:/home/usradmsvr#
+root@k8-prd-master01:/home/usradmsvr# kubectl -n metallb-system get deployment
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+controller   1/1     1            1           8m3s

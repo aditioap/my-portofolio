@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2025-02-03T06:52:15Z"
+  name: login-services-maf
+  #namespace: development
+  resourceVersion: "97338532"
+  uid: e2bd9006-20e1-4e8e-89d6-0e4fef838c95
+spec:
+  clusterIP: 10.99.228.155
+  clusterIPs:
+  - 10.99.228.155
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5102
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: login-services-maf
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

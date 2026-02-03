@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: mssql-database
+  name: mssql-database
+  namespace: mssql-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mssql-database
+  serviceName: mssql-database
+  template:
+    metadata:
+      labels:
+        app: mssql-database
+    spec:
+      securityContext:
+        fsGroup: 10001
+      imagePullSecrets:
+        - name: cred-sysadmin
+      containers:
+        - env:
+            - name: MSSQL_SA_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: mssql-db-config
+                  key: MSSQL_SA_PASSWORD
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_ENABLE_HADR
+              value: "1"
+            - name: MSSQL_AGENT_ENABLED
+              value: "1"
+#          command: 
+#            - /bin/bash
+#            - -c
+#            - cp /var/opt/config/mssql.conf /var/opt/mssql/mssql.conf && /opt/mssql/bin/sqlservr
+#          resources:
+#            requests:
+#              cpu: "2"
+#              memory: "2Gi"
+#            limits:
+#              cpu: "1"
+#              memory: "2Gi"
+          image: git.mcf.co.id:5050/moofi/moofi-production-kube/mssql-server:2022-latest
+          imagePullPolicy: IfNotPresent
+          name: mssql
+          ports:
+            - containerPort: 1433
+              protocol: TCP
+          volumeMounts:
+            - name: mssql-db-datadir
+              mountPath: /var/opt/mssql
+  volumeClaimTemplates:
+    - metadata: 
+        name: mssql-db-datadir
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: rook-ceph-block
+        resources:
+          requests:
+            storage: 10Gi

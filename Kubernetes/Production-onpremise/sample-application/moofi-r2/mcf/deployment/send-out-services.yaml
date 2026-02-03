@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: send-out-services
+    version: v1
+  name: send-out-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: send-out-services
+  template:
+    metadata:
+      labels:
+        app: send-out-services
+        version: v1
+    spec:
+      containers:
+      - env:
+        - name: DB_HOST
+          value: 172.16.95.40
+        - name: DB_USER
+          value: transvision
+        - name: DB_PASS
+          value: Tranvi$10n@2025
+        - name: DB_NAME
+          value: DUMP_MACF
+        - name: DB_PORT
+          value: "1433"
+        - name: FTP_HOST
+          value: 172.16.100.195
+        - name: FTP_PORT
+          value: "8823"
+        - name: FTP_USER
+          value: MACF\svr.system
+        - name: FTP_PASS
+          value: PasswordS3
+        - name: SERVICE_PORT
+          value: "3344"
+        - name: SP
+          value: MS_TRANSVISIONXMACF_MCF
+        - name: SP_IN
+          value: SAMPLE
+        - name: PT
+          value: MCF
+        image: git.mcf.co.id:5050/aldinugroho/send-out/send-out:6a49bba
+        imagePullPolicy: IfNotPresent
+        name: send-out-services
+        ports:
+        - containerPort: 3344
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

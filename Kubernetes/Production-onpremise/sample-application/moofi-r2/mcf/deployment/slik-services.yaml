@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: slik-services
+    version: v1
+  name: slik-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: slik-services
+  template:
+    metadata:
+      labels:
+        app: slik-services
+        version: v1
+    spec:
+      containers:
+      - env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ASPNETCORE_URLS
+          value: http://+:80
+        - name: C_MOBILE
+          valueFrom:
+            configMapKeyRef:
+              key: C_MOBILE
+              name: moofi-cm
+        - name: traefik_path
+          value: slik-service
+        - name: base_url
+          value: http://mobile.macf.co.id/
+        image: git.mcf.co.id:5050/moofi/slik.services/slik.services:92dcae1
+        imagePullPolicy: IfNotPresent
+        name: slik-services
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: cred-sysadmin

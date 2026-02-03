@@ -1,0 +1,49 @@
+apiVersion: v1
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+  COMPANY_NAME_ALIAS: mcf
+  CONN_ACQUISITION: uMvTxS/Jq1QIOYdYzPuhY3GOQhlCjItHYL//LGvUF35l6Resa+kKdwUFX0H7/OHL0SLG5UDX9MGzDj8xfZcoT+/+lHCQ0tViNIzVrXQ1Q0obpuwvqzdQXHkkqdoZjsGibLNhNI0NUWdZ+pJ5guHXpINEzEGkOYQ4kOXbNNkN2anzI5beyswzRokLJ3HnefdNl/7xcewG5A+KJF27yLxC8Z1SBK/HHqxWTfSaoH5tUXVWIB5fsqiuXJd2S/oTuLIGk5457o5xM+ZV3kTon/Bc3fJAbcjzYN4D
+  CONN_EPMAFDB: uMvTxS/Jq1Tn1yTjQ7DbiVtRLPy29mg0ZOvLPnSLPNeUJRSRVOeLkVxEFFcN2JdbFX7l5393+3EbpxgXMqBZaOABsS92+FZxRu31UTrNc40+XlInZRpGpRO8cA8Y49mKfgoHqE8m5gHk0EancB4CkzWvX0wqR8hEy6TqiIuMiVeCyCT+9ffe0CUPIkmECwE+R9kO6MicPW1dr4129t23MkScQYRMDlrO4EeIvFlAPdTw7btmxSh3Q19ij+j7Iypv9+HZelwtcGYdrxmSloCI3w==
+  CONN_EPMCFDB: uMvTxS/Jq1Tn1yTjQ7DbiXwSt8m48gW0mVerlBXYBjz6qP25QHLwa99A60U3rTHkbgwOIY8g77D3e5tR/fGDUgU+uwDnOURcixsNosWb6TrFj2+od/JN2UOA0R+N3FyeIb7cwZjwSkbTR/eXNKUcngxpD6De+tSOen8Gsq9WctIHNvTU91LeOhuJj+pqKJPPFcs9OdioEqzbkHvE/Fs4+Uz1x/BmeDpG2r+keN7IefJkxxOUJQyzOF525ed5Fgs8lyBDin526LK8ctKIrnUFACjwGa0kyo2+W+/vsdd9jsQ=
+  CONN_MACFDB: uMvTxS/Jq1Tdc3FNeEJXbYxoTsCpwU1YqbNs26hvwZqBuNrKVwl25GgPiPXIO2q0pC6EzeVYXJGIJKQgyAE3XHpGRqio1qlTBiCTwuUkcPdKUlqmS40ByvpcOv0Ig/9Z6A2LWFBD7emmmKW6s0tjPVvYciU5F6fnHwkJ9ysn77BrgQeyHNumuFrQDKUB6va9k7yGL3lVx6raKKfyLRoQArN0YH6BphhXfTvpNvbp16X1JY63J3fliWx7KUp2nnFj8P1FqZ7JFM4YwG+UWNCvSYwJeQ3pJWLk
+  CONN_MASTER: uMvTxS/Jq1Tn1yTjQ7DbibgJjPk3UJizUvtDd7mKglXNSP/c5SVDOo04Cmiv31nUiWsISDi99iBUiAaNvxmCFd+EQwUg4uNXiLtIHKVxwnk4lfnzS3fL4s2SXP7ty1j8Uivnr5U5SjkCfeAJbDI6uI6KLc2NxHYbtERTMw0XV2GL1zPyIq2J7KnAXtkn2hZ1ncI8lHz7B1ZVFp046KQgJyE0KUIbg5TRZ/e+89w0agT5pYUSyzouF2XnZkJJZ8TtvlQ1UWF6/+lTFFXELlsedx/yZnYiNIffTxFqV/VrgXdUoqn0QYSM3w==
+  CONN_MONGO_DUKCAPIL: 7iOd63L4kciN6Q6hCDOPfAvMS3wtsEXGGRub21grqwbS/Fd6iUgJdSbNEYDQeIVDfvLPQzpb2OgbkWIlvWs+/VIjIqQI7MJPCW6hlqUpF8+jduYtwUCYZPHk4yCSz0VsOXqdI3vLjUU=
+  CONN_MONGO_MASTER: 7iOd63L4kciN6Q6hCDOPfAvMS3wtsEXGGRub21grqwbS/Fd6iUgJdSbNEYDQeIVDfvLPQzpb2OgbkWIlvWs+/VIjIqQI7MJPCW6hlqUpF8+jduYtwUCYZIkyeh8FLazVmzJUV3oUDTA=
+  C_MOBILE: uMvTxS/Jq1RKHT+n6o2nZwSK/xaBgbBjTE7TulJ8c1bXdVH2DSpDfBev/pgXrpwLC7eoFA5gGMgmEWq5Tk30fhoGdHYiiSALq57p2H+4OFlwtywJ1fwEdjuiSHjOJtbfVMLrRMIUGO0xT90PE/jt3PK6P1b7ks3hMyTiBD9Bedw3frRS5qX0fqf30O4BH+WQReoB/eiDin0fk/uMAP2+JnAz09k9xMo7pTnKUYxaqjww/1eBirr2OrmOXgnZ+evviqPtO/pnVB83RN3Y3l4ju3Vn5kYzMHiL
+  C_Mongo: 7iOd63L4kciN6Q6hCDOPfAvMS3wtsEXGGRub21grqwbS/Fd6iUgJdSbNEYDQeIVDfvLPQzpb2OgbkWIlvWs+/VIjIqQI7MJPCW6hlqUpF8+jduYtwUCYZIkyeh8FLazVmzJUV3oUDTA=
+  DB_MONGO_DUKCAPIL: OBFnql261pmCkP5jFh6DwQ==
+  DB_MONGO_MASTER: d8pMG0t+ga8Y6GyhUEVXag==
+  DOM_BANK_ACCOUNT: https://kirimdoku.com/v2/api/cashin/inquiry
+  DOM_DUKCAPIL: https://dukcapil.mcf.co.id:5530/Dukcapil/mcf_fcl_recognition_r2
+  DOM_PEFINDO: https://vision.mcf.co.id/api/v1/external/super?flag1=L8lZiHFQTJAdbILJPlodww==&flag2=ONeGAj3zgmKqFuISM0Ihobv4LyLgo6iq&flag3=kFJakdPYzXxSlRKcGh1uAsHq0kr47wOF
+  DOM_FCL_RESULT: http://fcl-result-services.prod-mcf.svc.cluster.local:5100/api/v1/services/fclresult/processfclresult
+  DOM_OCR: http://ocr-app-service.prod-mcf.svc.cluster.local:3637/v1/ocrFCL/
+  #DOM_OCR: https://macfto.mcf.co.id:5000/v1/ocrFCL/
+  DOM_SIMILARITY_WORD: http://similarity-services.prod-mcf.svc.cluster.local:5099/similarityword
+  DOM_SIMILIARITY: http://similarity-services.prod-mcf.svc.cluster.local:5099/similarity
+  #DOM_SIMILIARITY: http://mobile.mcf.co.id/mcf/similarity-service/similarity?
+  DOM_LDAP: http://macf-rpld.macf.co.id:98
+  MONGO_URI: mongodb://usrapp:Usr4ap%402024@172.16.95.33:27017
+  DOM_TEMPO: http://172.16.91.216:4317
+  DOM_UPLOAD_MINIO: http://minio-services.prod-mcf.svc.cluster.local:5095/api/Files/Upload
+  DOM_MINIO: http://minio-services.prod-mcf.svc.cluster.local:5095
+  D_Mongo: d8pMG0t+ga8Y6GyhUEVXag==
+  HOSTNAME_RABITMQ: rabbitmq-prod.rabbitmq-system.svc.cluster.local
+  MINIO_ACCESS_KEY: LxVE7aWbYxYIUpEosrHP
+  MINIO_SECRET_KEY: JeP62JlOA5O9fpNDwKtPjWnU41OE9BzGa6cyWoN8
+  PASSWORD_RABITMQ: uuJeiiE19QVk1lKQTx4Ugw==
+  PORT_RABITMQ: '5672'
+  USERNAME_RABITMQ: G67m9p6Acus=
+  QUEUES_RABITMQ: backGroundProcess3
+  JWT_HOUR: H
+  JWT_TIME: '12'
+  JWT_SECRET_KEY: Ternak_Lele_Bang_Jali_Punya_Beragam_Ternak_Lele
+  NEOSCORE_URL: http://score.neokarya.com/v2/score_card/html-pro/
+  NEOSCORE_TOKEN: 0t77mYPNFJbskWOy6Q6nRoe4ZPnFNy4H3nlhhEQxCoTGiVSF3U
+  GOCONN_EP: sqlserver://mob_mcf:770wKKlcfkzJte7Dkax9@macf-dbmcf.macf.co.id:1433?database=EPMCF
+  GOCONN_MOB: sqlserver://usrMobile:UsrM0b1l3**@mcf-mobdb.macf.co.id:1433?database=mob_acq
+  DOM_VERIFACE: http://veriface-services.prod-mcf.svc.cluster.local:5115
+kind: ConfigMap
+metadata:
+  name: moofi-production-cm
+  namespace: prd-moofi-r2

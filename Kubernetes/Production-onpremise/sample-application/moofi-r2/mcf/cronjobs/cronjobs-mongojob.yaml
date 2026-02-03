@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongo-job
+  namespace: prd-moofi-r2
+spec:
+  schedule: "0 0 * * *"   # Every day at midnight UTC 
+  concurrencyPolicy: Forbid   # Prevent overlapping
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 86400  # Clean up after 1 day from Jobs
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: mongo-job
+            image: git.mcf.co.id:5050/moofi/mongo.job/mongo.job:4bd4fa0
+            imagePullPolicy: Always
+            env:
+            - name: C_MOBILE
+              valueFrom:
+                configMapKeyRef:
+                  name: moofi-production-cm
+                  key: C_MOBILE
+            - name: CONN_MASTER
+              valueFrom:
+                configMapKeyRef:
+                  name: moofi-production-cm
+                  key: CONN_MASTER
+            - name: C_Mongo
+              valueFrom:
+                configMapKeyRef:
+                  name: moofi-production-cm
+                  key: C_Mongo
+            - name: D_Mongo
+              valueFrom:
+                configMapKeyRef:
+                  name: moofi-production-cm
+                  key: D_Mongo
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                cpu: 100m
+                memory: 128Mi
+          imagePullSecrets:
+          - name: gitlab-mongo-job-secret

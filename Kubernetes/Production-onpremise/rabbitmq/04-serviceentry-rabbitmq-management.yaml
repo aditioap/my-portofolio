@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: rabbitmq-management
+  namespace: rabbitmq-system
+spec:
+  hosts:
+  - rabbitmq-prod.rabbitmq-system.svc.cluster.local
+  ports:
+  - number: 15672
+    name: management
+    protocol: TCP
+  resolution: NONE

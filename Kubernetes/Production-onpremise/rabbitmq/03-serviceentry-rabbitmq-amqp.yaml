@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: rabbitmq-amqp
+  namespace: rabbitmq-system
+spec:
+  hosts:
+  - rabbitmq-prod.rabbitmq-system.svc.cluster.local
+  ports:
+  - number: 5672
+    name: tcp-amqp
+    protocol: TCP
+  resolution: NONE

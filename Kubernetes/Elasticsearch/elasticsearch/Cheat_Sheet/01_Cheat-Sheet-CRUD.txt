@@ -1,0 +1,59 @@
+## Create Index
+PUT favourite_candy
+
+## Create Doc using auto generated id
+POST favourite_candy/_doc
+{
+  "first_name": "Jarot",
+  "candy": "Kiss"
+}
+
+## Create Doc using spesific id 
+POST favourite_candy/_doc/1
+{
+  "first_name": "John",
+  "candy": "Relaxa"
+}
+
+POST favourite_candy/_doc/2
+{
+  "first_name": "Rachel",
+  "candy": "Granita"
+}
+
+POST favourite_candy/_doc/3
+{
+  "first_name": "Tom",
+  "candy": "Aqua"
+}
+
+## If id has been created before, then doc will be updated on spesific id, and this not recomended
+POST favourite_candy/_doc/3
+{
+  "first_name": "Jefry",
+  "candy": "Snickers"
+}
+
+## Read Document
+GET favourite_candy/_doc/2
+
+## How to prevent create id without replace if the id has been created before
+PUT favourite_candy/_create/3
+{
+  "first_name": "Jota",
+  "candy": "Sugus"
+}
+
+## Update field candy on spesific id 2
+POST favourite_candy/_update/2
+{
+  "doc": {
+    "candy": "M&M's"
+  }
+}
+
+## Delete doc from spesific id
+DELETE favourite_candy/_doc/3
+
+## Check Document after deleted
+GET favourite_candy/_doc/3

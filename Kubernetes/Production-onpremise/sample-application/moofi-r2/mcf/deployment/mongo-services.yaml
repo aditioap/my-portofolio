@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mongo-services
+  name: mongo-services
+  #namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-services
+  template:
+    metadata:
+      labels:
+        app: mongo-services
+    spec:
+      containers:
+      - env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: C_Mongo
+          value: 7iOd63L4kciN6Q6hCDOPfCyNghWoIDY7TMnbEiHXYXk1B6MqmrTNDUC4scPzPvj8gvrfQu//no6F87bbc/pTOkGONvoCoHVobwp8wABvRudG16ISjqL0e6nZSNCYXIAEmOeu0fv9TNw=
+        - name: D_Mongo
+          value: d8pMG0t+ga8Y6GyhUEVXag==
+        - name: C_MOBILE
+          valueFrom:
+            configMapKeyRef:
+              key: C_MOBILE
+              name: moofi-cm
+        - name: ASPNETCORE_URLS
+          value: http://+:80
+        image: git.mcf.co.id:5050/moofi/mongo.services/mongo.services:51ac697
+        imagePullPolicy: Always
+        name: mongo-services
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: cred-sysadmin
