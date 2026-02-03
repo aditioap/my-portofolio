@@ -1,0 +1,3 @@
+FTP-Site_1;21;"D:\06-Test-Restore\Anak_Sholeh";aditio.prabowo ReadOnly
+FTP-Site_2;22;"D:\06-Test-Restore\Anak_Dajjal";desloni.sitorus ReadOnly
+FTP-Site_3;23;"D:\06-Test-Restore\Anak_Siapa";herbert.prayogo ReadOnly

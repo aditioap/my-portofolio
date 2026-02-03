@@ -1,0 +1,1 @@
+java -Xmx70G -jar "C:\SIPPClient\ReportingDesktopManager.exe"

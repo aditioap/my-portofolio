@@ -1,0 +1,2 @@
+@echo off
+msg * /w "This is a pop-up message with an OK button!"
