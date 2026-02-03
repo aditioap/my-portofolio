@@ -1,0 +1,33 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    http_proxy: "http://192.168.3.20:3128"
+    https_proxy: "http://192.168.3.20:3128"
+
+  tasks:
+    - name: Set HTTP proxy environment variables for the current playbook
+      shell: |
+        export http_proxy="{{ http_proxy }}"
+        export https_proxy="{{ https_proxy }}"
+      environment:
+        http_proxy: "{{ http_proxy }}"
+        https_proxy: "{{ https_proxy }}"
+      become: yes  # Ensure this command runs with sudo
+
+    - name: Install yum-utils package
+      yum:
+        name: yum-utils
+        state: present
+      environment:
+        http_proxy: "{{ http_proxy }}"
+        https_proxy: "{{ https_proxy }}"
+      become: yes  # Ensure this command runs with sudo
+
+    - name: Add Docker repository
+      shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+      environment:
+        http_proxy: "{{ http_proxy }}"
+        https_proxy: "{{ https_proxy }}"
+      become: yes  # Ensure this command runs with sudo
+

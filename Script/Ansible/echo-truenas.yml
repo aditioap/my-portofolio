@@ -1,0 +1,13 @@
+---
+- name: Echo to a file on a remote server
+  hosts: your_target_host
+  tasks:
+    - name: Echo a message to a file
+      ansible.builtin.shell: echo "Your message here" >> /path/to/remote/file.txt
+
+- name: Echo to a file on a remote server
+  hosts: your_target_host
+  tasks:
+    - name: Echo a message to a file
+      ansible.builtin.shell: echo "Your message here" >> /path/to/remote/file.txt
+

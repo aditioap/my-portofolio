@@ -1,0 +1,13 @@
+---
+- name: Add hosts entries to /etc/hosts
+  hosts: macf-worker
+  become: yes
+  tasks:
+    - name: Add worker nodes to /etc/hosts
+      ansible.builtin.blockinfile:
+        path: /etc/hosts
+        block: |
+          172.16.95.12 macf-worker20.macf.co.id
+          172.16.95.11 macf-worker19.macf.co.id
+        marker: "# ANSIBLE MANAGED BLOCK"
+

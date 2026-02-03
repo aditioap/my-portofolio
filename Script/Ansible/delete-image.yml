@@ -1,0 +1,109 @@
+---
+- name: Execute Delete Command local images on Remote Manager Hosts
+  hosts: uat-manager
+  tasks:
+    - name: Delete local images on Manager node
+      shell: sudo docker images |grep {{ SERVICENAME }} |awk '{print $3}' |xargs sudo docker image rmi --force
+      #command: "sudo docker images |grep {{ SERVICENAME }} |awk '{print $3}'"
+      ignore_errors: true
+      register: command_output
+      # Optionally, set 'become: true' if the command requires privilege escalation (sudo)
+      #become: true
+      become: true
+      #become_user: 'sysadmin'
+
+    - name: Display the Manager pulling images output
+      debug:
+        var: command_output.stdout_lines
+        #msg: "test value SERVICENAME: {{ env.SERVICENAME }} , TAGNUMBER: {{ env.TAGNUMBER }}"
+
+- name: Execute Delete Command local Images on Remote Worker Hosts
+  hosts: uat-worker
+  tasks:
+    - name: Delete local images on Worker node
+      shell:  sudo docker images |grep {{ SERVICENAME }} |awk '{print $3}' |xargs sudo docker image rmi --force
+      ignore_errors: true
+      register: command_output
+      # Optionally, set 'become: true' if the command requires privilege escalation (sudo)
+      #become: true
+      become: true
+      #become_user: 'sysadmin'
+
+    - name: Display the Worker output
+      debug:
+        var: command_output.stdout_lines
+        #msg: "test value SERVICENAME: {{ env.SERVICENAME }} , TAGNUMBER: {{ env.TAGNUMBER }}"
+
+- name: Execute Pull Command Docker from private registry on Remote Manager Hosts
+  hosts: uat-manager
+  tasks:
+    - name: Docker login to private registry on Manager node
+      shell: echo "{{ GITPASS }}" | sudo docker login {{ PRIVATEREPO }} --username "{{ GITLOGIN }}" --password-stdin
+      register: command_output
+      # Optionally, set 'become: true' if the command requires privilege escalation (sudo)
+      become: true
+      #no_log: true
+
+    - name: Display the Manager docker login output
+      debug:
+        var: command_output.stdout_lines
+
+    - name: Pull image Docker using tag latest from private registry on Manager node
+      shell: sudo docker pull {{ PRIVATEREPO }}/{{ SERVICENAME }}:{{ NEWTAG }}
+      #command: java --version
+      ignore_errors: true
+      register: command_output
+      # Optionally, set 'become: true' if the command requires privilege escalation (sudo)
+      become: true
+
+    - name: Display the output pull image using latest tag on manager node
+      debug:
+        var: command_output.stdout_lines
+
+    - name: Docker logout from private registry on Manager node
+      shell: sudo docker logout
+      register: command_output
+      # Optionally, set 'become: true' if the command requires privilege escalation (sudo)
+      become: true
+      #no_log: true
+
+    - name: Display the Manager docker logout output
+      debug:
+        var: command_output.stdout_lines
+
+- name: Execute Pull Command Docker from private registry on Remote Worker Hosts
+  hosts: uat-worker
+  tasks:
+    - name: Docker login to private registry on Worker node
+      shell: echo "{{ GITPASS }}" | sudo docker login {{ PRIVATEREPO }} --username "{{ GITLOGIN }}" --password-stdin
+      register: command_output
+      # Optionally, set 'become: true' if the command requires privilege escalation (sudo)
+      become: true
+      #no_log: true
+
+    - name: Display the Worker docker login output
+      debug:
+        var: command_output.stdout_lines
+
+    - name: Pull image Docker using tag latest from private registry on Worker node
+      shell: sudo docker pull {{ PRIVATEREPO }}/{{ SERVICENAME }}:{{ NEWTAG }}
+      #command: java --version
+      ignore_errors: true
+      register: command_output
+      # Optionally, set 'become: true' if the command requires privilege escalation (sudo)
+      become: true
+
+    - name: Display the output pull image using latest tag on worker node
+      debug:
+        var: command_output.stdout_lines
+
+    - name: Docker logout from private registry on Worker node
+      shell: sudo docker logout
+      register: command_output
+      # Optionally, set 'become: true' if the command requires privilege escalation (sudo)
+      become: true
+      #no_log: true
+
+    - name: Display the Worker docker logout output
+      debug:
+        var: command_output.stdout_lines

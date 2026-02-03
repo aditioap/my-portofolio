@@ -1,0 +1,19 @@
+---
+- name: Change Directory and Execute Command on Windows Remote Host
+  hosts: fincorefe-prod
+  tasks:
+#    - name: Change the current directory
+#      win_shell: |
+#        Set-Location -Path "C:\Path\To\Your\Directory"
+        
+#    - name: Execute a command in the new directory
+#      win_shell: |
+#        .\YourScriptOrCommand.exe   # Replace with the actual command you want to execute
+
+    - name: Execute a command check version dotnet
+      win_shell: dotnet --version   # Replace with the actual command you want to execute
+      register: dotnet_version_output
+
+    - name: Display the .Net version
+      debug:
+        var: dotnet_version_output.stdout_lines

@@ -1,0 +1,15 @@
+---
+- name: Execute Command on Remote Hosts
+  hosts: k8-master01
+  tasks:
+    - name: run script
+      command: sudo sh /tmp/healtcheck.sh
+      #command: java --version
+      register: command_output
+      # Optionally, set 'become: true' if the command requires privilege escalation (sudo)
+      become: true
+
+    - name: Display the output
+      debug:
+        var: command_output.stdout_lines
+

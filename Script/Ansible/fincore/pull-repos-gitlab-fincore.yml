@@ -1,0 +1,48 @@
+---
+- name: Change Directory and Execute Command from CMD
+  hosts: fincorefe-prod
+  gather_facts: no
+
+  vars:
+    git_user: sysadmin
+    git_pass: sysadmin
+    git_repo: git.macf.co.id/dev.bs/FINCORE.WEB.git
+    #local_dir: C:\Test\FINCORE.WEB
+    local_dir: C:\Source\FINCORE.WEB
+ 
+#  vars_prompt:
+#    - name: git_user
+#      private: no
+#      default: "{{ git_user }}"
+
+#    - name: git_pass
+#      private: no
+#      default: "{{ git_pass }}"
+
+
+  tasks:
+    - name: Change to Git Repository
+      win_shell: git status
+      register: chdir
+      #become: yes
+      args: 
+        chdir: "{{ local_dir }}"
+        executable: cmd.exe
+
+    - name: Display the output
+      debug:
+        var: chdir.stdout_lines
+
+    - name: Execute Git Command
+      win_shell: |
+        git checkout Staging
+        git pull
+      register: git_pull_result
+      #become: yes
+      args: 
+        chdir: "{{ local_dir }}"
+        executable: cmd.exe
+
+    - name: Display the output
+      debug:
+        var: git_pull_result.stdout_lines

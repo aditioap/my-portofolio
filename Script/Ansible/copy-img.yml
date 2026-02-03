@@ -1,0 +1,7 @@
+---
+- name: Transfer and execute a script.
+  hosts: all
+  remote_user: root
+  tasks:
+     - name: Execute the script
+       command: sh /script/copy-Img.sh

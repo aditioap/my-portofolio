@@ -1,0 +1,26 @@
+---
+- name: Git Clone, Checkout, and Pull
+  hosts: fincorefe-prod
+  vars:
+    git_repo_url: http://git.macf.co.id/dev.bs/FINCORE.WEB.git
+    git_local_dir: C:\Test
+    git_branch: Staging  # Replace with the branch you want to use
+  tasks:
+    - name: Clone Git Repository
+      git:
+        repo: "{{ git_repo_url }}"
+        dest: "{{ git_local_dir }}"
+      #become: yes
+
+    - name: Checkout Git Branch
+      git:
+        repo: "{{ git_local_dir }}"
+        version: "{{ git_branch }}"
+      #become: yes
+
+    - name: Pull Latest Changes
+      git:
+        repo: "{{ git_local_dir }}"
+        pull: yes
+      #become: yes
+

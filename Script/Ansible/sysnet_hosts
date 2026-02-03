@@ -1,0 +1,33 @@
+## Sysnet Production ##
+[sysnet-prod]
+macf-sysnet1.macf.co.id
+macf-sysnet2.macf.co.id
+macf-sysnet3.macf.co.id
+macf-sysnet4.macf.co.id
+macf-sysnet5.macf.co.id
+macf-sysnet6.macf.co.id
+macf-sysnet7.macf.co.id
+macf-sysnet8.macf.co.id
+
+[sysnet-prod:vars]
+ansible_user=ansible
+ansible_password=Usr4dmServer!
+ansible_connection=ssh
+ansible_shell_type=cmd
+ansible_ssh_common_args=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+ansible_ssh_retries=3
+ansible_become_method=runas
+
+
+## Sysnet Stg ##
+[sysnet-stg]
+macf-sysnetstg.macf.co.id
+
+[sysnet-stg:vars]
+ansible_user=ansible
+ansible_password=Usr4dmServer!
+ansible_connection=ssh
+ansible_shell_type=cmd
+ansible_ssh_common_args=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+ansible_ssh_retries=3
+ansible_become_method=runas

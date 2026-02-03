@@ -1,0 +1,12 @@
+---
+- name: Change Directory and Execute Command on Windows Remote Host
+  hosts: sysnet-stg
+  tasks:
+
+    - name: Execute a command check version git
+      win_shell: git --version   # Replace with the actual command you want to execute
+      register: git_version_output
+
+    - name: Display the .Net version
+      debug:
+        var: git_version_output.stdout_lines

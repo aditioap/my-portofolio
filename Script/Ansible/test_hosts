@@ -1,0 +1,11 @@
+## uat docker manager Host ##
+[test-node]
+k8-master01
+
+[test-node:vars]
+#ansible_python_interpreter=/bin/python3
+ansible_python_interpreter=/usr/bin/python
+ansible_become=true
+ansible_become_method=sudo
+ansible_become_user=sysadmin
+

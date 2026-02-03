@@ -1,0 +1,46 @@
+---
+- name: Set Git Credentials and Login
+  hosts: windows
+  tasks:
+#    - name: Change the current directory
+#      win_shell: |
+#        Set-Location -Path "C:\Path\To\Your\Directory"
+        
+#    - name: Execute a command in the new directory
+#      win_shell: |
+#        .\YourScriptOrCommand.exe   # Replace with the actual command you want to execute
+
+#    - name: Execute a command check version dotnet
+#      win_shell: dotnet --version   # Replace with the actual command you want to execute
+#      register: dotnet_version_output
+
+    - name: Run Git Bash
+      win_shell: |
+        Start-Process "C:\Program Files\Git\bin\bash.exe" -ArgumentList "--login -i" -Wait
+      register: run_git_output
+
+    - name: Run Git Bash #2
+      debug:
+        var: run_git_output.stdout_lines
+
+
+    - name: Set Git Credentials
+      win_shell: |
+        git config --global user.name "sysadmin"
+        git config --global user.email "it-sysadmin@mcf.co.id"
+        git config --global credential.helper store
+        echo "sysadmin" | git credential approve
+      register: git_login_output
+
+    - name: Set Git Credentials #2
+      debug:
+        var: git_login_output.stdout_lines
+
+
+
+
+#    - name: Log Out (Remove Git Credentials)
+#      win_shell: |
+#        git credential reject
+#        git config --unset --global user.name
+#        git config --unset --global user.email

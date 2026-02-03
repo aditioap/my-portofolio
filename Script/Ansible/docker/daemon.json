@@ -1,0 +1,6 @@
+{
+  "insecure-registries" : ["git.macf.co.id:5050", "git.mcf.co.id:5050"],
+  "metrics-addr" : "0.0.0.0:9323",
+  "experimental" : true
+}
+

@@ -1,0 +1,23 @@
+## ALIBABA Host ##
+[stg-manager]
+STG-Docker-Manager01
+STG-Docker-Manager02
+
+[stg-manager:vars]
+ansible_python_interpreter=/bin/python3
+ansible_ssh_user=sysadmin
+ansible_ssh_private_key_file=/root/.ssh/docker-manager.pem
+#ansible_port=2267
+
+[stg-worker]
+STG-Docker-Worker01
+STG-Docker-Worker02
+STG-Docker-Worker03
+STG-Docker-Worker04
+STG-Docker-Worker05
+STG-Docker-Worker06
+
+[stg-worker:vars]
+ansible_python_interpreter=/bin/python3
+ansible_ssh_user=sysadmin
+ansible_ssh_private_key_file=/root/.ssh/docker-worker.pem

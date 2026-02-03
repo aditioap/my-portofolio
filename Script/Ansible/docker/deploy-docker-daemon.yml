@@ -1,0 +1,27 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: Deploy Docker daemon configuration
+      copy:
+        src: daemon.json
+        dest: /etc/docker/daemon.json
+        owner: root
+        group: root
+        mode: '0644'
+      notify:
+        - Restart Docker
+
+  handlers:
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Restart Docker
+      service:
+        name: docker
+        state: restarted
+

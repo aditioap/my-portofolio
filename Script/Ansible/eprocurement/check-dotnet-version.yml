@@ -1,0 +1,19 @@
+---
+- name: Change Directory and Execute Command on Windows Remote Host
+  hosts: eprocurement-prod
+  tasks:
+#    - name: Change the current directory
+#      win_shell: |
+#        Set-Location -Path "C:\Path\To\Your\Directory"
+        
+#    - name: Execute a command in the new directory
+#      win_shell: |
+#        .\YourScriptOrCommand.exe   # Replace with the actual command you want to execute
+
+    - name: Execute a command check version dotnet
+      win_shell: git --version   # Replace with the actual command you want to execute
+      register: git_version_output
+
+    - name: Display the git version
+      debug:
+        var: git_version_output.stdout_lines

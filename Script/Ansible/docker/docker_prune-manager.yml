@@ -1,0 +1,23 @@
+---
+- name: Docker system prune on alibaba cloud - worker
+  hosts: ali-manager
+  become: true
+  become_method: sudo
+  gather_facts: false
+
+  tasks:
+    - name: Prune all unused Docker images
+      shell: docker image prune -a -f
+      args:
+        warn: false
+
+    - name: Prune all stopped Docker containes
+      shell: docker container prune -f
+      args:
+        warn: false
+
+    - name: Prune all unused Docker volumes
+      shell: docker volume prune -f
+      args:
+        warn: false
+

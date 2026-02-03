@@ -1,0 +1,20 @@
+## Fincore Production ##
+
+[fincorefe-prod]
+macf-fincore-maf.macf.co.id
+finmcf-web01.macf.co.id
+finmcf-web02.macf.co.id
+finmaf-web01.macf.co.id
+finmaf-web02.macf.co.id
+macf-fincorestg.macf.co.id
+macf-fincore-maf.macf.co.id
+
+
+[fincorefe-prod:vars]
+ansible_user=ansible
+ansible_password=Usr4dmServer!
+ansible_connection=ssh
+ansible_shell_type=cmd
+ansible_ssh_common_args=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+ansible_ssh_retries=3
+ansible_become_method=runas

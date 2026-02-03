@@ -1,0 +1,17 @@
+---
+- name: Check if port 1433 is open on macf-fcdbmcf from macf-worker13
+  hosts: macf-worker
+  become: no
+  tasks:
+    - name: Check port 1433 connectivity to macf-fcdbmcf
+      wait_for:
+        host: macf-fcdbmcf.macf.co.id
+        port: 1433
+        timeout: 5
+      register: sql_port_status
+      ignore_errors: yes
+
+    - name: Show port status
+      debug:
+        msg: "Port 1433 is {{ 'OPEN' if sql_port_status.failed == false else 'CLOSED' }} from macf-worker13 to macf-fcdbmcf"
+

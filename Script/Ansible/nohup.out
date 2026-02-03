@@ -1,0 +1,93 @@
+
+PLAY [Transfer and execute a script.] ******************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [macf-vapp10]
+ok: [macf-vapp40]
+ok: [macf-vdc]
+ok: [macf-vapp55]
+ok: [macf-vapp13]
+ok: [macf-vapp46]
+ok: [macf-vapp21]
+ok: [macf-vapp44]
+ok: [macf-vapp45]
+ok: [macf-vapp32]
+ok: [macf-vdcs]
+ok: [macf-vampdb]
+ok: [macf-vdb3]
+ok: [macf-vapp17]
+ok: [macf-vapp20]
+ok: [macf-vapp31]
+ok: [macf-pcvdkcp1]
+ok: [macf-vdbmobile]
+ok: [macf-vdb2]
+ok: [macf-vapp8]
+ok: [macf-vapp34]
+ok: [macf-vapp60]
+ok: [macf-vhr]
+ok: [macf-vapp81]
+ok: [macf-vinfra]
+ok: [macf-apilx]
+ok: [macf-virtual3]
+ok: [macf-mail]
+
+TASK [Execute the script] ******************************************************
+changed: [macf-vdcs]
+changed: [macf-vdc]
+changed: [macf-vapp10]
+fatal: [macf-vapp17]: UNREACHABLE! => {"changed": false, "msg": "Failed to connect to the host via ssh: Shared connection to macf-vapp17 closed.", "unreachable": true}
+fatal: [macf-vapp46]: UNREACHABLE! => {"changed": false, "msg": "Failed to connect to the host via ssh: Shared connection to macf-vapp46 closed.", "unreachable": true}
+fatal: [macf-vapp40]: UNREACHABLE! => {"changed": false, "msg": "Failed to connect to the host via ssh: Shared connection to macf-vapp40 closed.", "unreachable": true}
+fatal: [macf-vapp13]: UNREACHABLE! => {"changed": false, "msg": "Failed to connect to the host via ssh: Shared connection to macf-vapp13 closed.", "unreachable": true}
+fatal: [macf-vapp55]: UNREACHABLE! => {"changed": false, "msg": "Failed to connect to the host via ssh: Shared connection to macf-vapp55 closed.", "unreachable": true}
+changed: [macf-vapp45]
+changed: [macf-vapp32]
+changed: [macf-vapp44]
+fatal: [macf-vdb3]: FAILED! => {"changed": true, "cmd": ["sh", "/script/copy-Img.sh"], "delta": "0:00:00.011082", "end": "2023-03-06 15:39:57.472196", "msg": "non-zero return code", "rc": 127, "start": "2023-03-06 15:39:57.461114", "stderr": "sh: 0: Can't open /script/copy-Img.sh", "stderr_lines": ["sh: 0: Can't open /script/copy-Img.sh"], "stdout": "", "stdout_lines": []}
+fatal: [macf-vapp31]: FAILED! => {"changed": true, "cmd": ["sh", "/script/copy-Img.sh"], "delta": "0:00:00.006356", "end": "2023-03-06 08:35:38.033338", "msg": "non-zero return code", "rc": 127, "start": "2023-03-06 08:35:38.026982", "stderr": "sh: 0: Can't open /script/copy-Img.sh", "stderr_lines": ["sh: 0: Can't open /script/copy-Img.sh"], "stdout": "", "stdout_lines": []}
+fatal: [macf-pcvdkcp1]: FAILED! => {"changed": true, "cmd": ["sh", "/script/copy-Img.sh"], "delta": "0:00:00.004085", "end": "2023-03-06 08:35:38.277319", "msg": "non-zero return code", "rc": 127, "start": "2023-03-06 08:35:38.273234", "stderr": "sh: 0: Can't open /script/copy-Img.sh", "stderr_lines": ["sh: 0: Can't open /script/copy-Img.sh"], "stdout": "", "stdout_lines": []}
+fatal: [macf-vdbmobile]: FAILED! => {"changed": true, "cmd": ["sh", "/script/copy-Img.sh"], "delta": "0:00:00.002116", "end": "2023-03-06 08:56:03.158526", "msg": "non-zero return code", "rc": 127, "start": "2023-03-06 08:56:03.156410", "stderr": "sh: 0: Can't open /script/copy-Img.sh", "stderr_lines": ["sh: 0: Can't open /script/copy-Img.sh"], "stdout": "", "stdout_lines": []}
+changed: [macf-vapp21]
+changed: [macf-vapp20]
+changed: [macf-vapp8]
+changed: [macf-vdb2]
+changed: [macf-vapp34]
+changed: [macf-vapp60]
+changed: [macf-vhr]
+changed: [macf-vinfra]
+fatal: [macf-apilx]: FAILED! => {"changed": true, "cmd": ["sh", "/script/copy-Img.sh"], "delta": "0:00:00.006100", "end": "2023-03-06 13:17:48.387059", "msg": "non-zero return code", "rc": 127, "start": "2023-03-06 13:17:48.380959", "stderr": "sh: /script/copy-Img.sh: No such file or directory", "stderr_lines": ["sh: /script/copy-Img.sh: No such file or directory"], "stdout": "", "stdout_lines": []}
+changed: [macf-virtual3]
+changed: [macf-vapp81]
+fatal: [macf-vampdb]: FAILED! => {"changed": true, "cmd": ["sh", "/script/copy-Img.sh"], "delta": "19:24:30.355111", "end": "2023-03-07 11:29:53.953822", "msg": "non-zero return code", "rc": 32, "start": "2023-03-06 16:05:23.598711", "stderr": "Couldn't chdir to /backup: No such file or directory\n/script/copy-Img.sh: 17: cd: can't cd to /backup\n/script/copy-Img.sh: 24: cd: can't cd to /backup/macf-vampdb_172.16.91.31\numount: /backup: mountpoint not found", "stderr_lines": ["Couldn't chdir to /backup: No such file or directory", "/script/copy-Img.sh: 17: cd: can't cd to /backup", "/script/copy-Img.sh: 24: cd: can't cd to /backup/macf-vampdb_172.16.91.31", "umount: /backup: mountpoint not found"], "stdout": "/backup not mounted\nProcessing mount to /backup...\nFinished mount to /backup...\nThe system cannot find the file specified. \nLocal directory now /var/lib/vz/dump\nThe system cannot find the file specified. \nLocal directory now /var/lib/vz/dump\nThe system cannot find the file specified. \nLocal directory now /var/lib/vz/dump\nThe system cannot find the file specified. \nLocal directory now /var/lib/vz/dump\nThe system cannot find the file specified. \nLocal directory now /var/lib/vz/dump\nThe system cannot find the file specified. \nLocal directory now /var/lib/vz/dump\nThe system cannot find the file specified. \nLocal directory now /var/lib/vz/dump\nThe system cannot find the file specified. \nLocal directory now /var/lib/vz/dump\nThe system cannot find the file specified. \nLocal directory now /var/lib/vz/dump", "stdout_lines": ["/backup not mounted", "Processing mount to /backup...", "Finished mount to /backup...", "The system cannot find the file specified. ", "Local directory now /var/lib/vz/dump", "The system cannot find the file specified. ", "Local directory now /var/lib/vz/dump", "The system cannot find the file specified. ", "Local directory now /var/lib/vz/dump", "The system cannot find the file specified. ", "Local directory now /var/lib/vz/dump", "The system cannot find the file specified. ", "Local directory now /var/lib/vz/dump", "The system cannot find the file specified. ", "Local directory now /var/lib/vz/dump", "The system cannot find the file specified. ", "Local directory now /var/lib/vz/dump", "The system cannot find the file specified. ", "Local directory now /var/lib/vz/dump", "The system cannot find the file specified. ", "Local directory now /var/lib/vz/dump"]}
+changed: [macf-mail]
+
+PLAY RECAP *********************************************************************
+macf-apilx                 : ok=1    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+macf-mail                  : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-pcvdkcp1              : ok=1    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+macf-vampdb                : ok=1    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+macf-vapp10                : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vapp13                : ok=1    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vapp17                : ok=1    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vapp20                : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vapp21                : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vapp31                : ok=1    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+macf-vapp32                : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vapp34                : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vapp40                : ok=1    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vapp44                : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vapp45                : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vapp46                : ok=1    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vapp55                : ok=1    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vapp60                : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vapp8                 : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vapp81                : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vdb2                  : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vdb3                  : ok=1    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+macf-vdbmobile             : ok=1    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+macf-vdc                   : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vdcs                  : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vhr                   : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-vinfra                : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+macf-virtual3              : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

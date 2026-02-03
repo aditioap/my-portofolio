@@ -1,0 +1,16 @@
+---
+- name: Execute Command on Remote Hosts
+  hosts: uat-worker
+  tasks:
+    - name: check docker version on worker node
+      command: sudo docker --version
+      register: command_output
+      # Optionally, set 'become: true' if the command requires privilege escalation (sudo)
+      #become: true
+      become: true
+      #become_user: 'sysadmin'
+
+    - name: Display the output
+      debug:
+        var: command_output.stdout_lines
+

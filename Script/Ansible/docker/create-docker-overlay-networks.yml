@@ -1,0 +1,24 @@
+---
+- name: Create Docker overlay networks
+  hosts: stg-manager
+  tasks:
+    - name: Create Docker overlay network
+      community.docker.docker_network:
+        name: "{{ item }}"
+        driver: overlay
+        state: present
+      loop:
+        - traefik-mcf
+        - traefik-mcf-apuppt
+        - traefik-mcf-dr
+        - traefik-mcf-pilot
+        - traefik-mcf-stg
+        - traefik-maf
+        - traefik-maf-apuppt
+        - traefik-maf-dr
+        - traefik-maf-pilot
+        - traefik-maf-stg
+        - traefik-public
+        - traefik-mcf-moofi
+        - traefik-maf-moofi
+

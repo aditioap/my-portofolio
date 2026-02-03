@@ -1,0 +1,13 @@
+# docker_tag.yml
+
+- name: Create Docker Tag
+  hosts: uat-manager02
+  tasks:
+    - name: Tag Docker Image
+      docker_image:
+        name: git.macf.co.id:5050/dev.bs/fincore.service/{{ SERVICENAME }}:{{ TAGNUMBER }}
+        repository: git.macf.co.id:5050/dev.bs/fincore.service/{{ SERVICENAME }}:{{ TAGNUMBER }}
+        tag: 'latest'
+        source: pulled
+        state: present
+

@@ -1,0 +1,12 @@
+## Sysnet Production ##
+[eprocurement-prod]
+e-procurement.mcf.co.id
+
+[eprocurement-prod:vars]
+ansible_user=ansible
+ansible_password=Usr4dmServer!
+ansible_connection=ssh
+ansible_shell_type=cmd
+ansible_ssh_common_args=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+ansible_ssh_retries=3
+ansible_become_method=runas

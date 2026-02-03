@@ -1,0 +1,11 @@
+[windows]
+macf-fincore-maf.macf.co.id
+
+[windows:vars]
+ansible_user=ansible
+ansible_password=Usr4dmServer!
+ansible_port = 5985
+
+#connection = winrm
+#winrm_transport = basic
+#winrm_server_cert_validation = ignore

@@ -1,0 +1,13 @@
+---
+- name: Docker Login on All Hosts
+  hosts: macf-worker
+  become: yes
+  tasks:
+    - name: Log in to Docker registry
+      ansible.builtin.shell: |
+        echo "{{ docker_password }}" | docker login git.mcf.co.id:5050 -u "{{ docker_username }}" --password-stdin
+        echo "{{ docker_password }}" | docker login git.macf.co.id:5050 -u "{{ docker_username }}" --password-stdin
+      args:
+        executable: /bin/bash
+      no_log: true
+

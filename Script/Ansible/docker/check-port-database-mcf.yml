@@ -1,0 +1,16 @@
+- name: Run curl command on macf-worker
+  hosts: macf-worker
+  gather_facts: no
+  tasks:
+    - name: Execute curl command
+      shell: "curl -v telnet://macf-fcdbmcf:1433 -o /tmp/curl_output.txt"
+      register: curl_execution
+
+    - name: Read curl output
+      shell: "cat /tmp/curl_output.txt"
+      register: curl_output
+
+    - name: Show curl command output
+      debug:
+        var: curl_output.stdout
+

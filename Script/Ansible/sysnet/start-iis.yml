@@ -1,0 +1,12 @@
+---
+- name: Execute Command iisreset /stop on Windows Remote Host
+  hosts: sysnet-prod
+  tasks:
+
+    - name: Execute a command stop iis
+      win_shell: iisreset /start   # Replace with the actual command you want to execute
+      register: iis_output
+
+    - name: Display the output 
+      debug:
+        var: iis_output.stdout_lines

@@ -1,0 +1,32 @@
+- name: Reset and Recreate docker_gwbridge Network
+  hosts: macf-worker
+  become: yes
+  tasks:
+    - name: Disconnect docker_gwbridge from gateway_ingress-sbox
+      command: docker network disconnect -f docker_gwbridge gateway_ingress-sbox
+      ignore_errors: yes
+
+    - name: Remove docker_gwbridge network
+      command: docker network rm docker_gwbridge
+      ignore_errors: yes
+
+    - name: Recreate docker_gwbridge network
+      command: >
+        docker network create
+        --subnet 10.11.0.0/16
+        --opt com.docker.network.bridge.name=docker_gwbridge
+        --opt com.docker.network.bridge.enable_icc=false
+        --opt com.docker.network.bridge.enable_ip_masquerade=true
+        docker_gwbridge
+      register: recreate_result
+
+    - name: Restart Docker service
+      service:
+        name: docker
+        state: restarted
+      when: recreate_result.changed
+
+    #- name: Restart service docker after recreate network
+    #  command: systemctl restart docker
+    #  when: recreate_result.changed  # Only restart if the network was created/changed
+
